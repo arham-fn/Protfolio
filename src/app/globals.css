@@ -1,0 +1,208 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   ARHAM-OS — Global Styles
+   ═══════════════════════════════════════════════════════════════ */
+
+/* --- CSS Custom Properties (token bridge for runtime changes) --- */
+:root {
+  --color-jet: #0A0A0A;
+  --color-pink: #FF1F8E;
+  --color-chartreuse: #B6FF00;
+  --color-light: #F2F2F2;
+  --color-accent: var(--color-pink);
+
+  /* Registered custom property for donut chart animation */
+  --donut-angle: 0deg;
+}
+
+/* CSS Houdini — register --donut-angle so it's interpolatable */
+@property --donut-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* --- Base layer --- */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimeLegibility;
+    scroll-behavior: auto; /* Lenis handles smooth scroll */
+  }
+
+  body {
+    @apply bg-jet text-light font-mono;
+    overflow-x: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* --- Selection --- */
+  ::selection {
+    background: rgba(255, 31, 142, 0.3);
+    color: #F2F2F2;
+  }
+
+  /* --- Focus rings (chartreuse, keyboard-only) --- */
+  :focus-visible {
+    outline: 2px solid var(--color-chartreuse);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* --- Scrollbar --- */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-jet);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(182, 255, 0, 0.3);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(182, 255, 0, 0.6);
+  }
+
+  /* --- Headings --- */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+    color: rgba(242, 242, 242, 0.9);
+  }
+
+  /* --- Body text --- */
+  p, span, li, td, th, label, input, textarea {
+    color: rgba(242, 242, 242, 0.6);
+  }
+}
+
+/* --- Scanline overlay (CSS-only, 4% opacity) --- */
+@layer components {
+  .scanlines::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 300;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 1) 2px,
+      rgba(0, 0, 0, 1) 4px
+    );
+    opacity: 0.04;
+  }
+
+  /* --- HUD corner brackets --- */
+  .hud-bracket {
+    position: fixed;
+    width: 24px;
+    height: 24px;
+    border-color: rgba(242, 242, 242, 0.15);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .hud-bracket--tl {
+    top: 12px;
+    left: 12px;
+    border-top: 1px solid;
+    border-left: 1px solid;
+  }
+
+  .hud-bracket--tr {
+    top: 12px;
+    right: 12px;
+    border-top: 1px solid;
+    border-right: 1px solid;
+  }
+
+  .hud-bracket--bl {
+    bottom: 12px;
+    left: 12px;
+    border-bottom: 1px solid;
+    border-left: 1px solid;
+  }
+
+  .hud-bracket--br {
+    bottom: 12px;
+    right: 12px;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+  }
+
+  /* --- Custom cursor (desktop only) --- */
+  @media (hover: hover) and (pointer: fine) {
+    .custom-cursor-active {
+      cursor: none;
+    }
+
+    .custom-cursor-active a,
+    .custom-cursor-active button,
+    .custom-cursor-active [role="button"] {
+      cursor: none;
+    }
+  }
+
+  /* --- Post line (boot sequence) --- */
+  .post-line {
+    white-space: nowrap;
+    font-size: 0.875rem;
+    line-height: 1.8;
+    letter-spacing: 0.04em;
+  }
+
+  @media (min-width: 768px) {
+    .post-line {
+      font-size: 1rem;
+    }
+  }
+}
+
+/* --- Utility --- */
+@layer utilities {
+  .text-high {
+    color: rgba(242, 242, 242, 0.9);
+  }
+
+  .text-low {
+    color: rgba(242, 242, 242, 0.6);
+  }
+
+  /* Cheat mode (Konami code) */
+  .cheat-active {
+    filter: invert(1) hue-rotate(180deg);
+    transition: filter 0.5s ease;
+  }
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
