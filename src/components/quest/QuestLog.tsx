@@ -7,31 +7,25 @@ import { QUEST_MILESTONES } from '@/lib/timeline';
 
 export default function QuestLog() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      // Horizontal scrub timeline
-      const track = trackRef.current;
-      if (!track) return;
-
-      const totalScroll = track.scrollWidth - track.clientWidth;
-
-      if (window.innerWidth >= 768 && totalScroll > 0) {
-        gsap.to(track, {
-          x: -totalScroll,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top 20%',
-            end: () => `+=${totalScroll * 1.2}`,
-            scrub: 0.6,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-      }
+      // Clean staggered entrance for timeline cards without breaking page flow
+      ScrollTrigger.batch('.quest-card', {
+        interval: 0.1,
+        batchMax: 3,
+        onEnter: (batch) => {
+          gsap.from(batch, {
+            y: 30,
+            opacity: 0,
+            duration: 0.6,
+            stagger: 0.08,
+            ease: 'power3.out',
+            overwrite: 'auto',
+          });
+        },
+        once: true,
+      });
     },
     { scope: containerRef }
   );
@@ -40,7 +34,7 @@ export default function QuestLog() {
     <section
       id="quest-log"
       ref={containerRef}
-      className="relative min-h-screen py-24 px-6 sm:px-12 lg:px-24 border-b border-light/5 overflow-hidden"
+      className="relative py-24 px-6 sm:px-12 lg:px-24 border-b border-light/5"
     >
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
@@ -58,35 +52,34 @@ export default function QuestLog() {
         </div>
       </div>
 
-      {/* Horizontal Milestone Track */}
-      <div
-        ref={trackRef}
-        className="flex flex-col md:flex-row gap-6 md:gap-8 will-change-transform pb-8"
-      >
+      {/* Horizontal / Grid Scroll Container */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {QUEST_MILESTONES.map((m, idx) => (
           <div
             key={m.id}
-            className="w-full md:w-[380px] shrink-0 p-6 bg-jet border border-light/10 hover:border-chartreuse transition-colors relative font-mono"
+            className="quest-card p-6 bg-jet border border-light/10 hover:border-chartreuse transition-colors relative font-mono flex flex-col justify-between"
           >
-            {/* Top Index & Date */}
-            <div className="flex items-center justify-between mb-4 border-b border-light/10 pb-2">
-              <span className="text-[10px] text-pink font-bold">
-                QUEST 0{idx + 1}
-              </span>
-              <span className="text-[11px] text-chartreuse">
-                {m.date}
-              </span>
+            <div>
+              {/* Top Index & Date */}
+              <div className="flex items-center justify-between mb-4 border-b border-light/10 pb-2">
+                <span className="text-[10px] text-pink font-bold">
+                  QUEST 0{idx + 1}
+                </span>
+                <span className="text-[11px] text-chartreuse">
+                  {m.date}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h3 className="font-display font-bold text-lg text-light mb-3">
+                {m.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-xs text-light/70 leading-relaxed">
+                {m.description}
+              </p>
             </div>
-
-            {/* Title */}
-            <h3 className="font-display font-bold text-lg text-light mb-3">
-              {m.title}
-            </h3>
-
-            {/* Description */}
-            <p className="text-xs text-light/70 leading-relaxed">
-              {m.description}
-            </p>
 
             {/* Footer Tag */}
             <div className="mt-6 pt-3 border-t border-light/10 flex items-center justify-between text-[10px] text-light/40">

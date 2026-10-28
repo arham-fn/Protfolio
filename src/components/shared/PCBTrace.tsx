@@ -17,22 +17,25 @@ export default function PCBTrace() {
       strokeDashoffset: length,
     });
 
-    gsap.to(path, {
-      strokeDashoffset: 0,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: document.body,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 0.5,
+    const trigger = ScrollTrigger.create({
+      trigger: document.body,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.5,
+      onUpdate: (self) => {
+        if (path) {
+          path.style.strokeDashoffset = `${length * (1 - self.progress)}`;
+        }
       },
     });
+
+    return () => trigger.kill();
   }, []);
 
   return (
     <div
       aria-hidden="true"
-      className="absolute top-0 left-0 w-full h-full pointer-events-none z-[1] overflow-hidden opacity-40"
+      className="absolute top-0 left-0 w-full h-full pointer-events-none z-[1] overflow-hidden opacity-30"
     >
       <svg
         className="w-full h-full"

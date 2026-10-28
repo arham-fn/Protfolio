@@ -15,8 +15,8 @@ export default function SkillNode({ node, isHighlighted, onHover }: SkillNodePro
 
   return (
     <div
-      className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer"
-      style={{ left: `${node.x}%`, top: `${node.y}%` }}
+      className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer z-20"
+      style={{ left: `${(node.x / 1000) * 100}%`, top: `${(node.y / 600) * 100}%` }}
       onPointerEnter={() => {
         setHovered(true);
         onHover(node.id);
@@ -39,35 +39,35 @@ export default function SkillNode({ node, isHighlighted, onHover }: SkillNodePro
     >
       {/* Node Shape / Socket */}
       <div
-        className={`relative flex items-center justify-center rounded-none transition-all duration-300 ${
+        className={`relative flex items-center justify-center transition-all duration-200 select-none ${
           isCore
-            ? 'w-12 h-12 sm:w-14 sm:h-14 border-2'
-            : 'w-10 h-10 sm:w-11 sm:h-11 border'
+            ? 'w-12 h-12 md:w-14 md:h-14 border-2 bg-jet'
+            : 'w-10 h-10 md:w-11 md:h-11 border bg-jet/90'
         } ${
           hovered
-            ? 'border-pink bg-pink/20 text-pink scale-110 shadow-[0_0_16px_rgba(255,31,142,0.6)]'
+            ? 'border-pink bg-pink/25 text-pink scale-110 shadow-[0_0_16px_rgba(255,31,142,0.8)] z-30'
             : isHighlighted
-            ? 'border-chartreuse bg-chartreuse/20 text-chartreuse scale-105 shadow-[0_0_12px_rgba(182,255,0,0.4)]'
-            : 'border-chartreuse/40 bg-jet/80 text-chartreuse/80 hover:border-pink hover:text-pink'
+            ? 'border-chartreuse bg-chartreuse/25 text-chartreuse scale-105 shadow-[0_0_12px_rgba(182,255,0,0.6)] z-20'
+            : 'border-chartreuse/50 text-chartreuse/90 hover:border-pink hover:text-pink'
         }`}
       >
         {/* SVG Sprite Reference */}
         <svg
-          className={`${isCore ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5 sm:w-5 sm:h-5'} transition-colors duration-200`}
+          className={`${isCore ? 'w-6 h-6 md:w-7 md:h-7' : 'w-5 h-5 md:w-5 md:h-5'} transition-colors duration-200 pointer-events-none`}
         >
           <use href={`#icon-${node.id}`} />
         </svg>
 
-        {/* Tiny corner circuit accents on core nodes */}
+        {/* Corner circuit pin on core nodes */}
         {isCore && (
-          <span className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-chartreuse" />
+          <span className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-chartreuse shadow-[0_0_4px_#B6FF00]" />
         )}
       </div>
 
       {/* Strict Tooltip: Name ONLY on hover/focus */}
       <div
         role="tooltip"
-        className={`absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-0.5 bg-jet border border-chartreuse/60 text-chartreuse font-mono text-[11px] whitespace-nowrap pointer-events-none transition-all duration-200 z-50 ${
+        className={`absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-0.5 bg-jet border border-chartreuse text-chartreuse font-mono text-[11px] whitespace-nowrap pointer-events-none transition-all duration-150 shadow-[0_0_8px_rgba(182,255,0,0.3)] z-50 ${
           hovered ? 'opacity-100 -translate-y-1' : 'opacity-0 translate-y-1'
         }`}
       >

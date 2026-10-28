@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import BootSequence from '@/components/boot/BootSequence';
 import GlitchTransition from '@/components/shared/GlitchTransition';
 import HUDShell from '@/components/hud/HUDShell';
 import Hero from '@/components/hero/Hero';
+import NowSection from '@/components/now/NowSection';
 import SkillTree from '@/components/skills/SkillTree';
 import CartridgeGrid from '@/components/cartridges/CartridgeGrid';
 import RepairBay from '@/components/repair/RepairBay';
@@ -15,14 +16,16 @@ import PCBTrace from '@/components/shared/PCBTrace';
 import EasterEggManager from '@/components/easter-eggs/EasterEggManager';
 import { useClassMode, hydrateClassMode } from '@/hooks/useClassMode';
 import { useLenis } from '@/hooks/useLenis';
+import { ScrollTrigger } from '@/lib/gsap';
 import type { BootPhase } from '@/types';
 
 export default function Home() {
   const [phase, setPhase] = useState<BootPhase>('loading');
   const { mode } = useClassMode();
+  const mainRef = useRef<HTMLElement>(null);
 
   // Initialize Lenis smooth scroll
-  useLenis();
+  const lenisRef = useLenis();
 
   useEffect(() => {
     hydrateClassMode();
@@ -64,43 +67,70 @@ export default function Home() {
     setPhase('main');
   }, []);
 
-  // Section ordering dynamically tuned to ClassMode
-  // CLIENT = Cartridges + Contact first
-  // RECRUITER = Quest log + Skills + Contact first
-  // DEV = Skill tree + Repair Bay + Cartridges first
-  const sections = useMemo(() => {
-    const list = [
-      { id: 'hero', comp: <Hero key="hero" /> },
-      { id: 'skills', comp: <SkillTree key="skills" /> },
-      { id: 'cartridges', comp: <CartridgeGrid key="cartridges" /> },
-      { id: 'repair', comp: <RepairBay key="repair" /> },
-      { id: 'quest', comp: <QuestLog key="quest" /> },
-      { id: 'contact', comp: <Contact key="contact" /> },
-    ];
+  // When class mode changes, refresh ScrollTrigger and smooth scroll
+  useEffect(() => {
+    if (phase !== 'main') return;
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+      if (lenisRef.current) {
+        lenisRef.current.resize();
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [mode, phase, lenisRef]);
 
+  // Section definitions
+  const allSections = useMemo(
+    () => ({
+      hero: <Hero key="hero" />,
+      now: <NowSection key="now" />,
+      skills: <SkillTree key="skills" />,
+      cartridges: <CartridgeGrid key="cartridges" />,
+      repair: <RepairBay key="repair" />,
+      quest: <QuestLog key="quest" />,
+      contact: <Contact key="contact" />,
+    }),
+    []
+  );
+
+  // Section ordering dynamically tuned to ClassMode
+  // CLIENT: Hero -> Now -> Cartridges -> Contact -> Repair -> Skills -> Quest
+  // RECRUITER: Hero -> Now -> Quest -> Skills -> Cartridges -> Contact -> Repair
+  // DEV: Hero -> Now -> Skills -> Repair -> Cartridges -> Quest -> Contact
+  const orderedSections = useMemo(() => {
     if (mode === 'CLIENT') {
       return [
-        list[0], // hero
-        list[2], // cartridges
-        list[5], // contact
-        list[3], // repair
-        list[1], // skills
-        list[4], // quest
+        allSections.hero,
+        allSections.now,
+        allSections.cartridges,
+        allSections.contact,
+        allSections.repair,
+        allSections.skills,
+        allSections.quest,
       ];
     } else if (mode === 'RECRUITER') {
       return [
-        list[0], // hero
-        list[4], // quest
-        list[1], // skills
-        list[2], // cartridges
-        list[5], // contact
-        list[3], // repair
+        allSections.hero,
+        allSections.now,
+        allSections.quest,
+        allSections.skills,
+        allSections.cartridges,
+        allSections.contact,
+        allSections.repair,
       ];
     }
 
     // Default / DEV mode
-    return list;
-  }, [mode]);
+    return [
+      allSections.hero,
+      allSections.now,
+      allSections.skills,
+      allSections.repair,
+      allSections.cartridges,
+      allSections.quest,
+      allSections.contact,
+    ];
+  }, [mode, allSections]);
 
   return (
     <>
@@ -121,8 +151,10 @@ export default function Home() {
               {/* Glowing PCB Trace SVG line drawing through sections */}
               <PCBTrace />
 
-              {/* Dynamic Sections */}
-              <main>{sections.map((s) => s.comp)}</main>
+              {/* Dynamic Sections Container */}
+              <main ref={mainRef} className="relative z-10 transition-opacity duration-300">
+                {orderedSections}
+              </main>
             </div>
           </HUDShell>
           <EasterEggManager />
