@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#141414"/>
+      <stop offset="100%" stop-color="#0A0A0A"/>
+    </radialGradient>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="rgba(182,255,0,0.15)"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- PCB Trace decorative lines -->
+  <path d="M 60,60 L 200,60 L 260,120 L 400,120" stroke="#FF1F8E" stroke-width="3" fill="none" opacity="0.6"/>
+  <circle cx="400" cy="120" r="5" fill="#FF1F8E"/>
+
+  <path d="M 1140,570 L 1000,570 L 940,510 L 800,510" stroke="#B6FF00" stroke-width="3" fill="none" opacity="0.6"/>
+  <circle cx="800" cy="510" r="5" fill="#B6FF00"/>
+
+  <!-- Brackets -->
+  <path d="M 40,70 L 40,40 L 70,40" stroke="#F2F2F2" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M 1160,70 L 1160,40 L 1130,40" stroke="#F2F2F2" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M 40,560 L 40,590 L 70,590" stroke="#F2F2F2" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M 1160,560 L 1160,590 L 1130,590" stroke="#F2F2F2" stroke-width="2" fill="none" opacity="0.3"/>
+
+  <!-- Badge -->
+  <rect x="80" y="160" width="320" height="34" fill="#0A0A0A" stroke="#B6FF00" stroke-width="1.5"/>
+  <circle cx="102" cy="177" r="5" fill="#B6FF00"/>
+  <text x="120" y="183" font-family="monospace" font-size="13" font-weight="bold" fill="#B6FF00" letter-spacing="2">
+    ARHAM-OS // v2026.10
+  </text>
+
+  <!-- Big Name -->
+  <text x="80" y="300" font-family="sans-serif" font-size="108" font-weight="900" fill="#F2F2F2" letter-spacing="-3">
+    ARHAM<tspan fill="#FF1F8E">.OS</tspan>
+  </text>
+
+  <!-- Pitch -->
+  <text x="85" y="370" font-family="monospace" font-size="26" fill="#F2F2F2" opacity="0.9">
+    I build AI-powered apps, and I can fix the laptop you run them on.
+  </text>
+
+  <!-- Sub tags -->
+  <text x="85" y="440" font-family="monospace" font-size="16" fill="#B6FF00" letter-spacing="1">
+    ● 8 MACHINES FIXED · 5 LAPTOPS · 3 PCs · 100% POST OK
+  </text>
+  <text x="85" y="480" font-family="monospace" font-size="15" fill="#FF1F8E">
+    ► FULL-STACK // MOBILE // VISION // HARDWARE DIAGNOSTICS
+  </text>
+
+  <!-- Coordinates -->
+  <text x="1120" y="580" font-family="monospace" font-size="12" fill="rgba(242,242,242,0.4)" text-anchor="end">
+    FAISALABAD, PK // 31.4504° N, 73.1350° E
+  </text>
+</svg>

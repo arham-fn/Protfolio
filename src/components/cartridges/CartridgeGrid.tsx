@@ -3,13 +3,12 @@
 import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useGSAP } from '@gsap/react';
-import { gsap, ScrollTrigger, Flip } from '@/lib/gsap';
+import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { PROJECTS } from '@/lib/projects';
 import Cartridge from './Cartridge';
 import type { Project } from '@/types';
 import { useClassMode } from '@/hooks/useClassMode';
 
-// Dynamic import for expanded case study dialog to preserve bundle size
 const CaseStudy = dynamic(() => import('./CaseStudy'), {
   ssr: false,
 });
@@ -19,7 +18,6 @@ export default function CartridgeGrid() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { mode } = useClassMode();
 
-  // Scroll batch entrance
   useGSAP(
     () => {
       ScrollTrigger.batch('.cartridge-item', {
@@ -45,22 +43,22 @@ export default function CartridgeGrid() {
     <section
       id="cartridges"
       ref={containerRef}
-      className="relative min-h-screen py-24 px-6 sm:px-12 lg:px-24 border-b border-light/5"
+      className="relative py-24 px-6 sm:px-12 lg:px-24 border-b border-light/5"
     >
-      {/* Header */}
+      {/* Headline + One Line Rule */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
         <div>
-          <div className="text-chartreuse font-mono text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
+          <div className="text-chartreuse font-mono text-xs uppercase tracking-widest mb-1.5 flex items-center gap-2">
             <span className="w-2 h-2 bg-chartreuse inline-block animate-pulse-dot" />
-            ROM ARCHIVE // PRODUCTION DEPLOYMENTS // CASE STUDIES
+            ROM ARCHIVE // PRODUCTION DEPLOYMENTS
           </div>
           <h2 className="font-display font-black text-3xl sm:text-5xl text-light">
             PROJECT CARTRIDGES
           </h2>
         </div>
-        <div className="text-xs font-mono text-light/50 max-w-sm">
+        <p className="text-xs font-mono text-light/60 max-w-sm">
           Select any cartridge to insert into the chassis and review technical telemetry, architectures, and outcomes.
-        </div>
+        </p>
       </div>
 
       {/* Grid */}

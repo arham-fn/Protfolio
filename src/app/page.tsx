@@ -21,6 +21,7 @@ import type { BootPhase } from '@/types';
 
 export default function Home() {
   const [phase, setPhase] = useState<BootPhase>('loading');
+  const [mounted, setMounted] = useState(false);
   const { mode } = useClassMode();
   const mainRef = useRef<HTMLElement>(null);
 
@@ -28,6 +29,7 @@ export default function Home() {
   const lenisRef = useLenis();
 
   useEffect(() => {
+    setMounted(true);
     hydrateClassMode();
 
     // Check if already booted in this session
@@ -67,7 +69,6 @@ export default function Home() {
     setPhase('main');
   }, []);
 
-  // When class mode changes, refresh ScrollTrigger and smooth scroll
   useEffect(() => {
     if (phase !== 'main') return;
     const timer = setTimeout(() => {
@@ -93,10 +94,6 @@ export default function Home() {
     []
   );
 
-  // Section ordering dynamically tuned to ClassMode
-  // CLIENT: Hero -> Now -> Cartridges -> Contact -> Repair -> Skills -> Quest
-  // RECRUITER: Hero -> Now -> Quest -> Skills -> Cartridges -> Contact -> Repair
-  // DEV: Hero -> Now -> Skills -> Repair -> Cartridges -> Quest -> Contact
   const orderedSections = useMemo(() => {
     if (mode === 'CLIENT') {
       return [
@@ -120,7 +117,6 @@ export default function Home() {
       ];
     }
 
-    // Default / DEV mode
     return [
       allSections.hero,
       allSections.now,
@@ -134,17 +130,31 @@ export default function Home() {
 
   return (
     <>
-      {phase === 'loading' && (
-        <div className="fixed inset-0 bg-jet z-[500]" aria-hidden="true" />
+      {/* SSR Initial Fallback Viewport for immediate first paint without JS */}
+      {!mounted && (
+        <noscript>
+          <div className="min-h-screen bg-jet text-light p-8 font-mono">
+            <h1 className="font-display font-black text-5xl mb-4">ARHAM.OS</h1>
+            <p className="text-xl text-pink mb-4">
+              I build AI-powered apps, and I can fix the laptop you run them on.
+            </p>
+            <p className="text-chartreuse">
+              JavaScript is required for the interactive 3D cartridge bay and hardware diagnostic simulator.
+            </p>
+          </div>
+        </noscript>
       )}
 
+      {/* Boot: BIOS POST sequence */}
       {phase === 'boot' && <BootSequence onComplete={handleBootComplete} />}
 
+      {/* Glitch: 300ms RGB-split transition */}
       {phase === 'glitch' && (
         <GlitchTransition onComplete={handleGlitchComplete} />
       )}
 
-      {phase === 'main' && (
+      {/* Main site */}
+      {(phase === 'main' || (!mounted && phase === 'loading')) && (
         <div className="scanlines">
           <HUDShell>
             <div className="relative">

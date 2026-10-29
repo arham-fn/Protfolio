@@ -45,31 +45,31 @@ export default function NowSection() {
       id="now"
       className="relative py-20 px-6 sm:px-12 lg:px-24 border-b border-light/5 font-mono"
     >
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+      {/* Headline + One Line Subhead Rule */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
         <div>
-          <div className="text-pink text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
+          <div className="text-pink text-xs uppercase tracking-widest mb-1.5 flex items-center gap-2">
             <span className="w-2.5 h-2.5 bg-pink inline-block animate-ping" />
-            LIVE TELEMETRY // CURRENT RUNTIME // ACTIVE CYCLES
+            LIVE TELEMETRY // CURRENT RUNTIME
           </div>
           <h2 className="font-display font-black text-3xl sm:text-5xl text-light">
             WHAT I&apos;M DOING NOW
           </h2>
         </div>
-        <div className="text-xs text-light/50 max-w-sm">
-          Real-time snapshot of active ventures, production engineering roles, degree progression, and active study.
-        </div>
+        <p className="text-xs text-light/60 max-w-sm">
+          Active ventures, production AI engineering roles, degree milestones, and automation tracks.
+        </p>
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {NOW_ITEMS.map((item, idx) => (
           <div
             key={idx}
-            className="p-6 bg-jet border border-light/10 hover:border-chartreuse transition-all duration-300 relative group overflow-hidden"
+            className="p-5 bg-jet border border-light/10 hover:border-chartreuse transition-all duration-300 relative group overflow-hidden"
           >
             {/* Top Tag & Status */}
-            <div className="flex items-center justify-between mb-4 border-b border-light/10 pb-3">
+            <div className="flex items-center justify-between mb-3 border-b border-light/10 pb-2.5">
               <span className="text-[10px] text-light/50 font-bold uppercase tracking-wider">
                 [{item.tag}]
               </span>
@@ -80,10 +80,10 @@ export default function NowSection() {
             </div>
 
             {/* Role & Entity */}
-            <h3 className="font-display font-bold text-xl text-light group-hover:text-chartreuse transition-colors mb-1">
+            <h3 className="font-display font-bold text-lg sm:text-xl text-light group-hover:text-chartreuse transition-colors mb-1">
               {item.role}
             </h3>
-            <div className="text-xs text-pink font-semibold tracking-wide mb-3">
+            <div className="text-xs text-pink font-semibold tracking-wide mb-2">
               @ {item.entity}
             </div>
 
@@ -91,12 +91,6 @@ export default function NowSection() {
             <p className="text-xs text-light/70 leading-relaxed">
               {item.description}
             </p>
-
-            {/* Bottom Accent Line */}
-            <div className="mt-4 pt-3 border-t border-light/10 flex items-center justify-between text-[10px] text-light/40">
-              <span>FREQUENCY: CONTINUOUS</span>
-              <span className="text-chartreuse font-mono">2026 CYCLE</span>
-            </div>
           </div>
         ))}
       </div>

@@ -2,22 +2,12 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 /* ═══════════════════════════════════════════
-   Metadata + SEO
+   Metadata + SEO (No meta keywords tag)
    ═══════════════════════════════════════════ */
 export const metadata: Metadata = {
   title: 'Arham — AI-Powered Apps & Hardware Tinkerer',
   description:
-    'I build AI-powered apps, and I can fix the laptop you run them on. Full-stack developer, mobile builder, and the go-to tech person.',
-  keywords: [
-    'Arham',
-    'full-stack developer',
-    'AI apps',
-    'React',
-    'Next.js',
-    'React Native',
-    'hardware repair',
-    'portfolio',
-  ],
+    'I build AI-powered apps, and I can fix the laptop you run them on. Full-stack developer, mobile builder, and hardware diagnostic specialist.',
   authors: [{ name: 'Arham' }],
   openGraph: {
     title: 'Arham — AI-Powered Apps & Hardware Tinkerer',
@@ -25,13 +15,21 @@ export const metadata: Metadata = {
       'I build AI-powered apps, and I can fix the laptop you run them on.',
     type: 'website',
     locale: 'en_US',
-    // [PLACEHOLDER: OG image URL after Vercel deploy]
+    images: [
+      {
+        url: '/og.svg',
+        width: 1200,
+        height: 630,
+        alt: 'Arham OS — AI Apps & Hardware Tinkerer',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Arham — AI-Powered Apps & Hardware Tinkerer',
     description:
       'I build AI-powered apps, and I can fix the laptop you run them on.',
+    images: ['/og.svg'],
   },
   robots: {
     index: true,
@@ -93,7 +91,6 @@ export default function RootLayout({
                 addressLocality: 'Faisalabad',
                 addressCountry: 'PK',
               },
-              // [PLACEHOLDER: url, sameAs (GitHub, LinkedIn, Upwork, Fiverr)]
             }),
           }}
         />
