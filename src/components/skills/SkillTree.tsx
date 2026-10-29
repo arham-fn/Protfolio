@@ -43,14 +43,19 @@ export default function SkillTree() {
         interval: 0.05,
         batchMax: 6,
         onEnter: (batch) => {
-          gsap.from(batch, {
-            scale: 0.2,
-            opacity: 0,
-            ease: EASE.bounce,
-            stagger: 0.04,
-            duration: 0.45,
-            overwrite: 'auto',
-          });
+          gsap.fromTo(
+            batch,
+            { scale: 0.2, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 1,
+              ease: EASE.bounce,
+              stagger: 0.04,
+              duration: 0.45,
+              overwrite: 'auto',
+              clearProps: 'transform,opacity',
+            }
+          );
         },
         once: true,
       });
@@ -157,7 +162,9 @@ export default function SkillTree() {
                   isHighlighted={Boolean(isHighlighted)}
                   isSelected={selectedNode?.id === node.id}
                   onHover={setActiveHoverId}
-                  onSelect={setSelectedNode}
+                  onSelect={(node) =>
+                    setSelectedNode((prev) => (prev?.id === node.id ? null : node))
+                  }
                 />
               </div>
             );

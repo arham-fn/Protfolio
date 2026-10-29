@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function SkillSprites() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="hidden" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" className="absolute w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">
       <defs>
         {/* HTML5 */}
         <symbol id="icon-html" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

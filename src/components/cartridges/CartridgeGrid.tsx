@@ -24,14 +24,19 @@ export default function CartridgeGrid() {
         interval: 0.08,
         batchMax: 4,
         onEnter: (batch) => {
-          gsap.from(batch, {
-            y: 40,
-            opacity: 0,
-            duration: 0.6,
-            stagger: 0.06,
-            ease: 'power3.out',
-            overwrite: 'auto',
-          });
+          gsap.fromTo(
+            batch,
+            { y: 40, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.6,
+              stagger: 0.06,
+              ease: 'power3.out',
+              overwrite: 'auto',
+              clearProps: 'transform,opacity',
+            }
+          );
         },
         once: true,
       });
@@ -64,7 +69,7 @@ export default function CartridgeGrid() {
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {PROJECTS.map((proj) => (
-          <div key={proj.id} className="cartridge-item">
+          <div key={proj.id} id={proj.id} className="cartridge-item scroll-mt-20">
             <Cartridge project={proj} onSelect={setSelectedProject} />
           </div>
         ))}

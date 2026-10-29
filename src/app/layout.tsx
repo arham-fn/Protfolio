@@ -5,6 +5,7 @@ import './globals.css';
    Metadata + SEO (No meta keywords tag)
    ═══════════════════════════════════════════ */
 export const metadata: Metadata = {
+  metadataBase: new URL('https://personal-tech-journey-tracker.vercel.app'),
   title: 'Arham — AI-Powered Apps & Hardware Tinkerer',
   description:
     'I build AI-powered apps, and I can fix the laptop you run them on. Full-stack developer, mobile builder, and hardware diagnostic specialist.',

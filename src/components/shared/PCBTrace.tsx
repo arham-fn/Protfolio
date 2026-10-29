@@ -7,29 +7,40 @@ import { gsap, ScrollTrigger } from '@/lib/gsap';
 export default function PCBTrace() {
   const pathRef = useRef<SVGPathElement>(null);
 
-  useGSAP(() => {
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
     const path = pathRef.current;
-    if (!path) return;
+    if (!path || typeof path.getTotalLength !== 'function') return;
 
-    const length = path.getTotalLength();
-    gsap.set(path, {
-      strokeDasharray: length,
-      strokeDashoffset: length,
+    let trigger: ScrollTrigger | null = null;
+    const ctx = gsap.context(() => {
+      try {
+        const length = path.getTotalLength();
+        gsap.set(path, {
+          strokeDasharray: length,
+          strokeDashoffset: length,
+        });
+
+        trigger = ScrollTrigger.create({
+          trigger: document.body,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.5,
+          onUpdate: (self) => {
+            if (path) {
+              path.style.strokeDashoffset = `${length * (1 - self.progress)}`;
+            }
+          },
+        });
+      } catch {
+        // Fallback if SVG geometry calculation is unavailable
+      }
     });
 
-    const trigger = ScrollTrigger.create({
-      trigger: document.body,
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: 0.5,
-      onUpdate: (self) => {
-        if (path) {
-          path.style.strokeDashoffset = `${length * (1 - self.progress)}`;
-        }
-      },
-    });
-
-    return () => trigger.kill();
+    return () => {
+      trigger?.kill();
+      ctx.revert();
+    };
   }, []);
 
   return (

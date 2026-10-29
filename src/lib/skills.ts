@@ -178,7 +178,7 @@ export const SKILL_NODES: ExtendedSkillNode[] = [
     y: 220,
     connections: [],
     usage: 'Structured JSON tool calling, prompt embeddings, and automated multi-step LLM workflows.',
-    project: 'Invitrex Automation & Subscription Tracker'
+    project: 'Subscription Tracker'
   },
   {
     id: 'opencv',

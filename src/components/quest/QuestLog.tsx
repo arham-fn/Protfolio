@@ -15,14 +15,19 @@ export default function QuestLog() {
         interval: 0.1,
         batchMax: 3,
         onEnter: (batch) => {
-          gsap.from(batch, {
-            y: 30,
-            opacity: 0,
-            duration: 0.6,
-            stagger: 0.08,
-            ease: 'power3.out',
-            overwrite: 'auto',
-          });
+          gsap.fromTo(
+            batch,
+            { y: 30, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.6,
+              stagger: 0.08,
+              ease: 'power3.out',
+              overwrite: 'auto',
+              clearProps: 'transform,opacity',
+            }
+          );
         },
         once: true,
       });

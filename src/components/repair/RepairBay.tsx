@@ -98,8 +98,17 @@ export default function RepairBay() {
         {REPAIR_DEVICES.map((dev, i) => (
           <div
             key={dev.id}
+            tabIndex={0}
+            role="button"
+            aria-label={`View bench ticket for slot 0${i + 1}: ${dev.type.toUpperCase()} (${dev.model})`}
             onClick={() => setSelectedDevice(dev)}
-            className="device-slot p-4 border border-chartreuse/30 bg-jet/80 hover:border-pink hover:shadow-[0_0_16px_rgba(255,31,142,0.3)] transition-all cursor-pointer group"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setSelectedDevice(dev);
+              }
+            }}
+            className="device-slot p-4 border border-chartreuse/30 bg-jet/80 hover:border-pink hover:shadow-[0_0_16px_rgba(255,31,142,0.3)] active:scale-95 transition-all cursor-pointer group select-none"
           >
             {/* Slot Icon */}
             <div className="flex items-center justify-between mb-3 text-light/40 group-hover:text-pink transition-colors">

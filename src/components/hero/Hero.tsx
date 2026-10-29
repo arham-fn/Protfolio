@@ -21,34 +21,26 @@ export default function Hero() {
     () => {
       const tl = gsap.timeline({ defaults: { ease: EASE.enter } });
 
-      // Character split stagger
-      tl.from('.hero-char', {
-        y: 60,
-        opacity: 0,
-        stagger: 0.05,
-        duration: 0.8,
-      });
+      // Character split stagger with fromTo and clearProps
+      tl.fromTo(
+        '.hero-char',
+        { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.05, duration: 0.8, clearProps: 'transform,opacity' }
+      );
 
       // Role & pitch line
-      tl.from(
+      tl.fromTo(
         '.hero-pitch',
-        {
-          y: 24,
-          opacity: 0,
-          duration: 0.6,
-        },
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, clearProps: 'transform,opacity' },
         '-=0.4'
       );
 
       // Tech Atlas LIVE chip bounce
-      tl.from(
+      tl.fromTo(
         '.hero-live-chip',
-        {
-          scale: 0.8,
-          opacity: 0,
-          duration: 0.5,
-          ease: EASE.bounce,
-        },
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: EASE.bounce, clearProps: 'transform,opacity' },
         '-=0.2'
       );
     },

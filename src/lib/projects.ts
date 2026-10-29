@@ -112,22 +112,6 @@ export const PROJECTS: Project[] = [
     posterImage: '/images/projects/langar-poster.avif'
   },
   {
-    id: 'weather-reminder',
-    title: 'Calendar-Aware Weather Assistant',
-    tagline: 'Smart agenda protector against microclimate surprises.',
-    status: 'PLANNED',
-    stack: ['Next.js', 'Tailwind CSS', 'OpenWeather API', 'Google Calendar API'],
-    description: 'Proactive utility cross-referencing daily itinerary locations with precipitation and heat index forecasts.',
-    problem: 'Standard calendar alerts do not account for commute weather hazards or outdoor event viability.',
-    result: 'Rule-based notification pipeline notifying the user before departing for scheduled appointments.',
-    features: [
-      'Event Geolocation Parsing',
-      'Hourly Delta Precipitation Triggers',
-      'Commute Buffer Recommendations'
-    ],
-    posterImage: '/images/projects/weather-reminder-poster.avif'
-  },
-  {
     id: 'salesforce-klaviyo-demos',
     title: 'Salesforce & Klaviyo Demo Orgs',
     tagline: 'Enterprise customer journey pipelines and telemetry triggers.',

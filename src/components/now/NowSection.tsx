@@ -10,32 +10,32 @@ export interface NowItem {
 
 export const NOW_ITEMS: NowItem[] = [
   {
-    tag: 'VENTURE',
-    role: 'Co-Founder',
-    entity: 'National Tech Forge',
-    description: 'Forging high-impact tech infrastructure, hardware-software integration, and scalable digital systems for builders and enterprises.',
-    status: 'SCALING'
+    tag: 'FLAGSHIP',
+    role: 'Full-Stack Developer',
+    entity: 'Tech Atlas 2026',
+    description: 'Engineering personal tech-journey tracker to map progress, 12-week milestones, curriculum roadmaps, and software deployments.',
+    status: 'ACTIVE'
   },
   {
     tag: 'PRODUCTION',
-    role: 'AI Automation Developer',
-    entity: 'Invitrex',
-    description: 'Architecting intelligent autonomous agents, multi-step LLM pipelines, and automated business workflows to replace manual operational friction.',
+    role: 'Freelance AI-Integrated Builder',
+    entity: 'Independent Practice',
+    description: 'Architecting full-stack web and mobile applications with AI integration, deterministic state pipelines, and low-latency backends.',
     status: 'ACTIVE'
   },
   {
     tag: 'ACADEMICS',
-    role: 'BS Computer Science (5th Semester)',
-    entity: 'Government College University Faisalabad (GCUF)',
-    description: 'Diving deep into operating systems, computer architecture, automata theory, database design, and algorithmic performance.',
+    role: 'BS Computer Science',
+    entity: 'GCUF (Faisalabad)',
+    description: 'Core curriculum covering operating systems, computer architecture, systems programming, and algorithmic complexity.',
     status: 'IN PROGRESS'
   },
   {
-    tag: 'UPSKILLING',
-    role: 'Google Automation Certifications',
-    entity: 'Google & Professional Track',
-    description: 'Mastering cloud-native workflow automations, enterprise API bridges, Python system scripting, and predictive trigger services.',
-    status: 'ENROLLED'
+    tag: 'HARDWARE',
+    role: 'Hardware Diagnostics Specialist',
+    entity: 'Workbench (Unpaid)',
+    description: 'Diagnosing cold-boot and POST failures on laptops and PCs: DDR pin oxidation, +12V PSU drops, and powercfg standby overrides.',
+    status: 'ACTIVE'
   }
 ];
 

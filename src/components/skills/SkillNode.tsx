@@ -39,7 +39,7 @@ export default function SkillNode({
       }}
       tabIndex={0}
       role="button"
-      aria-label={`${node.name} skill node. Click or press enter to view technical details.`}
+      aria-label={node.name}
       onClick={handleTrigger}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
