@@ -5,37 +5,31 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        jet: '#0A0A0A',
-        pink: {
-          DEFAULT: '#FF1F8E',
-        },
-        chartreuse: {
-          DEFAULT: '#B6FF00',
-        },
-        light: '#F2F2F2',
+        bg: '#D8D2BE',
+        surface: '#C7BFA6',
+        primary: '#F2541B',
+        accent: '#1E3FA0',
+        ink: '#1A1814',
+        hi: '#EFEADB',
+        lo: '#8F8870',
       },
       fontFamily: {
-        display: ['Unbounded', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        display: ['"Bricolage Grotesque"', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
-      animation: {
-        blink: 'blink 1s steps(1) infinite',
-        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-        'pulse-dot': 'pulse-dot 1.5s ease-in-out infinite',
+      boxShadow: {
+        'bevel-raised': 'inset 2px 2px 0px #EFEADB, inset -2px -2px 0px #8F8870',
+        'bevel-sunken': 'inset 2px 2px 0px #8F8870, inset -2px -2px 0px #EFEADB',
+        'window': '3px 3px 0px rgba(26, 24, 20, 0.45)',
       },
       keyframes: {
         blink: {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0' },
         },
-        'pulse-glow': {
-          '0%, 100%': { opacity: '1', filter: 'brightness(1)' },
-          '50%': { opacity: '0.7', filter: 'brightness(1.3)' },
-        },
-        'pulse-dot': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.4' },
-        },
+      },
+      animation: {
+        blink: 'blink 1s steps(1) infinite',
       },
     },
   },
@@ -43,3 +37,4 @@ const config: Config = {
 };
 
 export default config;
+

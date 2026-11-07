@@ -3,29 +3,24 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════
-   ARHAM-OS — Global Styles
+   ARHAM — "BEIGE BOX OS"
+   Late-90s PC Aesthetic System
    ═══════════════════════════════════════════════════════════════ */
 
-/* --- CSS Custom Properties (token bridge for runtime changes) --- */
 :root {
-  --color-jet: #0A0A0A;
-  --color-pink: #FF1F8E;
-  --color-chartreuse: #B6FF00;
-  --color-light: #F2F2F2;
-  --color-accent: var(--color-pink);
+  --bg: #D8D2BE;       /* page */
+  --surface: #C7BFA6;  /* windows, cards */
+  --primary: #F2541B;  /* power LED orange: fills, CTAs */
+  --accent: #1E3FA0;   /* BIOS blue: links, headings, focus */
+  --text: #1A1814;     /* ink */
+  --ink: #1A1814;
+  --hi: #EFEADB;       /* bevel highlight */
+  --lo: #8F8870;       /* bevel shadow */
 
-  /* Registered custom property for donut chart animation */
-  --donut-angle: 0deg;
+  --turbo-multiplier: 1;
 }
 
-/* CSS Houdini — register --donut-angle so it's interpolatable */
-@property --donut-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
-/* --- Base layer --- */
+/* Base resets & typography */
 @layer base {
   *,
   *::before,
@@ -36,166 +31,230 @@
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimeLegibility;
-    scroll-behavior: auto; /* Lenis handles smooth scroll */
+    scroll-behavior: auto;
+    background-color: var(--bg);
+    color: var(--ink);
+    overflow-x: clip;
   }
 
   body {
-    @apply bg-jet text-light font-mono;
-    overflow-x: hidden;
-    min-height: 100vh;
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+    overflow-x: clip;
+    min-height: 100svh;
     min-height: 100dvh;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
   }
 
-  /* --- Selection --- */
+  /* Selection */
   ::selection {
-    background: rgba(255, 31, 142, 0.3);
-    color: #F2F2F2;
+    background-color: var(--accent);
+    color: #EFEADB;
   }
 
-  /* --- Focus rings (chartreuse, keyboard-only) --- */
+  /* Accessible high-contrast focus rings */
   :focus-visible {
-    outline: 2px solid var(--color-chartreuse);
-    outline-offset: 3px;
-    border-radius: 2px;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   :focus:not(:focus-visible) {
     outline: none;
   }
 
-  /* --- Scrollbar --- */
+  /* Late-90s Windows-style scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 16px;
+    height: 16px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--color-jet);
+    background: var(--bg);
+    border: 1px solid var(--lo);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(182, 255, 0, 0.3);
-    border-radius: 3px;
+    background: var(--surface);
+    border-top: 2px solid var(--hi);
+    border-left: 2px solid var(--hi);
+    border-right: 2px solid var(--lo);
+    border-bottom: 2px solid var(--lo);
   }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(182, 255, 0, 0.6);
+  ::-webkit-scrollbar-thumb:active {
+    border-top: 2px solid var(--lo);
+    border-left: 2px solid var(--lo);
+    border-right: 2px solid var(--hi);
+    border-bottom: 2px solid var(--hi);
   }
 
-  /* --- Headings --- */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display;
-    color: rgba(242, 242, 242, 0.9);
-  }
-
-  /* --- Body text --- */
-  p, span, li, td, th, label, input, textarea {
-    color: rgba(242, 242, 242, 0.6);
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    font-weight: 800;
   }
 }
 
-/* --- Scanline overlay (CSS-only, 4% opacity) --- */
+/* Late-90s Bevel Utilities */
 @layer components {
-  .scanlines::after {
-    content: '';
-    position: fixed;
+  /* Raised 2px Bevel (buttons, window bodies, cards) */
+  .bevel-raised {
+    border-top: 2px solid var(--hi);
+    border-left: 2px solid var(--hi);
+    border-right: 2px solid var(--lo);
+    border-bottom: 2px solid var(--lo);
+    background-color: var(--surface);
+  }
+
+  /* Sunken 2px Bevel (status bars, text fields, screen recesses) */
+  .bevel-sunken {
+    border-top: 2px solid var(--lo);
+    border-left: 2px solid var(--lo);
+    border-right: 2px solid var(--hi);
+    border-bottom: 2px solid var(--hi);
+    background-color: #EDE8D6;
+  }
+
+  /* Interactive tactile button */
+  .bevel-btn {
+    border-top: 2px solid var(--hi);
+    border-left: 2px solid var(--hi);
+    border-right: 2px solid var(--lo);
+    border-bottom: 2px solid var(--lo);
+    background-color: var(--surface);
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    user-select: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+  }
+
+  .bevel-btn:active,
+  .bevel-btn[data-pressed="true"] {
+    border-top: 2px solid var(--lo);
+    border-left: 2px solid var(--lo);
+    border-right: 2px solid var(--hi);
+    border-bottom: 2px solid var(--hi);
+    transform: translate(1px, 1px);
+  }
+
+  /* Primary CTA fill - primary fill only, with ink text on it! */
+  .bevel-btn-primary {
+    background-color: var(--primary) !important;
+    color: var(--ink) !important;
+    font-weight: 700;
+  }
+
+  /* Window Title Bar */
+  .window-titlebar {
+    background: linear-gradient(90deg, #1E3FA0 0%, #3B5FCA 100%);
+    color: #EFEADB;
+    padding: 3px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    user-select: none;
+  }
+
+  .window-titlebar.inactive {
+    background: linear-gradient(90deg, #8F8870 0%, #A9A28B 100%);
+    color: #D8D2BE;
+  }
+
+  /* Window Control Buttons */
+  .win-btn {
+    width: 20px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1.5px solid var(--hi);
+    border-left: 1.5px solid var(--hi);
+    border-right: 1.5px solid var(--lo);
+    border-bottom: 1.5px solid var(--lo);
+    background-color: var(--surface);
+    color: var(--ink);
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .win-btn:active {
+    border-top: 1.5px solid var(--lo);
+    border-left: 1.5px solid var(--lo);
+    border-right: 1.5px solid var(--hi);
+    border-bottom: 1.5px solid var(--hi);
+  }
+
+  /* CRT subtle monitor flicker only on hero monitor */
+  .crt-screen {
+    position: relative;
+    background: #0f140f;
+    color: #7aff7a;
+    font-family: 'IBM Plex Mono', monospace;
+    text-shadow: 0 0 4px rgba(122, 255, 122, 0.6);
+  }
+
+  .crt-screen::before {
+    content: " ";
+    display: block;
+    position: absolute;
     inset: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 3px;
+    z-index: 5;
     pointer-events: none;
-    z-index: 300;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 1) 2px,
-      rgba(0, 0, 0, 1) 4px
-    );
-    opacity: 0.04;
+    opacity: 0.6;
   }
 
-  /* --- HUD corner brackets --- */
-  .hud-bracket {
-    position: fixed;
-    width: 24px;
-    height: 24px;
-    border-color: rgba(242, 242, 242, 0.15);
-    pointer-events: none;
-    z-index: 100;
-  }
-
-  .hud-bracket--tl {
-    top: 12px;
-    left: 12px;
-    border-top: 1px solid;
-    border-left: 1px solid;
-  }
-
-  .hud-bracket--tr {
-    top: 12px;
-    right: 12px;
-    border-top: 1px solid;
-    border-right: 1px solid;
-  }
-
-  .hud-bracket--bl {
-    bottom: 12px;
-    left: 12px;
-    border-bottom: 1px solid;
-    border-left: 1px solid;
-  }
-
-  .hud-bracket--br {
-    bottom: 12px;
-    right: 12px;
-    border-bottom: 1px solid;
-    border-right: 1px solid;
-  }
-
-  /* --- Custom cursor (desktop only) --- */
-  @media (hover: hover) and (pointer: fine) {
-    .custom-cursor-active {
-      cursor: none;
-    }
-
-    .custom-cursor-active a,
-    .custom-cursor-active button,
-    .custom-cursor-active [role="button"] {
-      cursor: none;
-    }
-  }
-
-  /* --- Post line (boot sequence) --- */
-  .post-line {
-    white-space: nowrap;
-    font-size: 0.875rem;
-    line-height: 1.8;
-    letter-spacing: 0.04em;
-  }
-
-  @media (min-width: 768px) {
-    .post-line {
-      font-size: 1rem;
-    }
+  /* Turbo Reduced Motion */
+  body[data-turbo="false"] * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
-/* --- Utility --- */
-@layer utilities {
-  .text-high {
-    color: rgba(242, 242, 242, 0.9);
-  }
-
-  .text-low {
-    color: rgba(242, 242, 242, 0.6);
-  }
-
-  /* Cheat mode (Konami code) */
-  .cheat-active {
-    filter: invert(1) hue-rotate(180deg);
-    transition: filter 0.5s ease;
+/* Scroll-driven animations (Zero-JS CSS reveals where supported) */
+@supports (animation-timeline: view()) {
+  .scroll-view-reveal {
+    animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 30%;
   }
 }
 
-/* --- Reduced motion --- */
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile coarse pointer adjustments */
+@media (pointer: coarse) {
+  .custom-cursor {
+    display: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

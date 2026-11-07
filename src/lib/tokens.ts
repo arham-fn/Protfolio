@@ -1,54 +1,31 @@
 // ═══════════════════════════════════════════════════════════════
-// ARHAM-OS Design Tokens
-// Single source of truth for every visual constant in the build.
+// ARHAM — "BEIGE BOX OS" Design Tokens
 // ═══════════════════════════════════════════════════════════════
 
-// --- Palette (strict: jet 70%, pink 20%, chartreuse 10%) ---
 export const COLORS = {
-  jet: '#0A0A0A',
-  pink: '#FF1F8E',
-  chartreuse: '#B6FF00',
-  light: '#F2F2F2',
-  lightHigh: 'rgba(242, 242, 242, 0.9)',
-  lightLow: 'rgba(242, 242, 242, 0.6)',
+  bg: '#D8D2BE',       // page
+  surface: '#C7BFA6',  // windows, cards
+  primary: '#F2541B',  // power LED orange: fills, CTAs
+  accent: '#1E3FA0',   // BIOS blue: links, headings, focus rings
+  ink: '#1A1814',      // text
+  hi: '#EFEADB',       // bevel highlight
+  lo: '#8F8870',       // bevel shadow
 } as const;
 
-// --- GSAP Easings ---
 export const EASE = {
-  /** Entrances — elements appearing on screen */
   enter: 'power3.out',
-  /** Exits — elements leaving the screen */
   exit: 'power3.in',
-  /** State changes — class switch, cartridge insert, tab swap */
   transition: 'expo.inOut',
-  /** Playful — button press, chip bounce, node pop */
-  bounce: 'back.out(1.4)',
+  bounce: 'back.out(1.5)',
 } as const;
 
-// --- Durations (seconds) ---
 export const DUR = {
-  /** Micro: tooltips, hover states, cursor morph */
-  fast: 0.4,
-  /** Standard: scroll reveals, node highlights */
-  normal: 0.6,
-  /** Hero entrances, section transitions, Flip reorders */
-  slow: 0.9,
-  /** Boot sequence total */
+  fast: 0.3,
+  normal: 0.5,
+  slow: 0.8,
   boot: 3.5,
-  /** RGB-split glitch transition */
-  glitch: 0.3,
 } as const;
 
-// --- Stagger intervals (seconds) ---
-export const STAGGER = {
-  char: 0.025,
-  node: 0.05,
-  card: 0.08,
-  device: 0.15,
-  line: 0.2,
-} as const;
-
-// --- Breakpoints (px) ---
 export const BP = {
   sm: 640,
   md: 768,
@@ -56,12 +33,15 @@ export const BP = {
   xl: 1280,
 } as const;
 
-// --- Z-index layers ---
 export const Z = {
   base: 0,
   pcbTrace: 1,
   content: 10,
+  windows: 40,
+  windowActive: 50,
   hud: 100,
+  taskbar: 100,
+  modal: 150,
   cursor: 200,
   scanlines: 300,
   glitch: 400,
@@ -69,10 +49,10 @@ export const Z = {
   biosSetup: 600,
 } as const;
 
-// --- POST text lines ---
 export const POST_LINES = [
-  'ARHAM-OS v2026',
-  'CPU: curiosity',
-  'RAM: re-seated, 8/8 machines fixed',
+  'ARHAM-OS v1998',
+  'CPU: Curiosity @ 66MHz',
+  'RAM: 16MB SDRAM 100MHz (8/8 fixed)',
   'POST: OK',
 ] as const;
+
