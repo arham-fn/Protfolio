@@ -1,278 +1,275 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { useGSAP } from '@gsap/react';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
+import React, { useState } from 'react';
 import { REPAIR_STATS, REPAIR_DEVICES, ALSO_TINKERS_WITH } from '@/lib/repairs';
 import RepairTicket from './RepairTicket';
+import OSWindow from '@/components/os/OSWindow';
 import type { RepairDevice } from '@/types';
+import { useOSStore } from '@/hooks/useOSStore';
 
 export default function RepairBay() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [selectedDevice, setSelectedDevice] = useState<RepairDevice | null>(null);
+  const [diagnosePick, setDiagnosePick] = useState<'ram' | 'ssd' | 'psu' | null>(null);
+  const { trackRepairInspect } = useOSStore();
 
-  // Roll-up counter and slot entrances
-  useGSAP(
-    () => {
-      const counterTarget = { count: 0, invoice: 100 };
-
-      // Number roll-up
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top 75%',
-        once: true,
-        onEnter: () => {
-          gsap.to(counterTarget, {
-            count: 8,
-            duration: 1.2,
-            ease: 'power2.out',
-            onUpdate: () => {
-              const el = document.getElementById('fixed-counter');
-              if (el) el.textContent = Math.round(counterTarget.count).toString();
-            },
-          });
-
-          // Staggered boot-flicker on device slots
-          gsap.from('.device-slot', {
-            opacity: 0.1,
-            scale: 0.9,
-            duration: 0.4,
-            stagger: 0.12,
-            ease: 'power3.out',
-          });
-        },
-      });
-    },
-    { scope: containerRef }
-  );
+  const handleDeviceClick = (dev: RepairDevice) => {
+    trackRepairInspect(dev.id);
+    setSelectedDevice(dev);
+  };
 
   return (
-    <section
-      id="repair-bay"
-      ref={containerRef}
-      className="relative min-h-screen py-24 px-6 sm:px-12 lg:px-24 border-b border-light/5 font-mono"
+    <OSWindow
+      id="repair"
+      title="C:\BENCH - HARDWARE REPAIR BAY &amp; POST DIAGNOSTICS"
+      icon="🔧"
     >
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
-        <div>
-          <div className="text-pink text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
-            <span className="w-2 h-2 bg-pink inline-block animate-ping" />
-            BENCH TELEMETRY // SILICON & SOLDER // POST DIAGNOSTICS
+      <div className="space-y-6 font-mono text-xs sm:text-sm">
+        {/* Header Intro */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-lo">
+          <div>
+            <div className="text-[11px] text-accent font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span>●</span>
+              <span>BENCH TELEMETRY // SILICON, MULTIMETERS &amp; SOLDER</span>
+            </div>
+            <h2 className="font-display font-black text-2xl sm:text-4xl text-accent">
+              REPAIR BAY
+            </h2>
           </div>
-          <h2 className="font-display font-black text-3xl sm:text-5xl text-light">
-            REPAIR BAY
-          </h2>
+          <div className="text-xs text-ink/70 max-w-sm">
+            Hands-on hardware troubleshooting. 8 machines rescued from cold-boot POST failure at zero charge.
+          </div>
         </div>
-        <div className="text-xs text-light/50 max-w-sm">
-          Hands-on hardware troubleshooting. Click any slot to review the bench ticket and root cause.
-        </div>
-      </div>
 
-      {/* Primary Counter Callout */}
-      <div className="p-6 sm:p-8 bg-jet border-2 border-chartreuse/40 mb-12 relative overflow-hidden">
-        <div className="flex flex-wrap items-baseline gap-4 sm:gap-8 mb-2">
-          <div className="flex items-baseline gap-2">
-            <span
-              id="fixed-counter"
-              className="font-display font-black text-5xl sm:text-7xl text-chartreuse tabular-nums"
-            >
+        {/* Primary Counter Callout */}
+        <div className="p-4 sm:p-6 bevel-sunken bg-[#EDE8D6] flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-baseline gap-3">
+            <span className="font-display font-black text-4xl sm:text-6xl text-accent tabular-nums">
               8
             </span>
-            <span className="text-sm sm:text-lg text-chartreuse font-bold">
-              MACHINES FIXED
-            </span>
+            <div>
+              <div className="font-bold text-base sm:text-lg text-ink">
+                MACHINES FIXED
+              </div>
+              <div className="text-xs text-ink/70">
+                5 LAPTOPS · 3 PCs
+              </div>
+            </div>
           </div>
 
-          <div className="text-xs sm:text-sm text-light/70 border-l border-light/10 pl-4 sm:pl-8 space-y-0.5">
-            <div>5 LAPTOPS · 3 PCs</div>
-            <div className="text-pink font-bold">$0 INVOICED</div>
+          <div className="text-right">
+            <div className="bevel-raised px-3 py-1 bg-primary text-ink font-black text-sm sm:text-base inline-block">
+              $0 INVOICED
+            </div>
+            <div className="text-[11px] text-ink/70 italic mt-1">
+              &quot;{REPAIR_STATS.subline}&quot;
+            </div>
           </div>
         </div>
-        <p className="text-xs text-chartreuse/80 italic">
-          &quot;{REPAIR_STATS.subline}&quot;
-        </p>
-      </div>
 
-      {/* 8 Device Slots Grid (5 Laptops, 3 Towers) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
-        {REPAIR_DEVICES.map((dev, i) => (
-          <div
-            key={dev.id}
-            tabIndex={0}
-            role="button"
-            aria-label={`View bench ticket for slot 0${i + 1}: ${dev.type.toUpperCase()} (${dev.model})`}
-            onClick={() => setSelectedDevice(dev)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setSelectedDevice(dev);
-              }
-            }}
-            className="device-slot p-4 border border-chartreuse/30 bg-jet/80 hover:border-pink hover:shadow-[0_0_16px_rgba(255,31,142,0.3)] active:scale-95 transition-all cursor-pointer group select-none"
-          >
-            {/* Slot Icon */}
-            <div className="flex items-center justify-between mb-3 text-light/40 group-hover:text-pink transition-colors">
-              <span className="text-[10px]">SLOT 0{i + 1}</span>
-              {dev.type === 'laptop' ? (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <rect x="3" y="4" width="18" height="12" rx="1" />
-                  <path d="M2 18h20" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <rect x="5" y="2" width="14" height="20" rx="1" />
-                  <circle cx="12" cy="6" r="1" fill="currentColor" />
-                  <path d="M9 10h6M9 13h6" />
-                </svg>
-              )}
-            </div>
-
-            <div className="text-xs text-light/90 font-bold group-hover:text-chartreuse transition-colors">
-              {dev.type.toUpperCase()}
-            </div>
-            <div className="text-[10px] text-light/40 truncate mb-3">
-              {dev.model}
-            </div>
-
-            {/* Boot Status Badge */}
-            <div className="flex items-center justify-between text-[9px] pt-2 border-t border-light/10">
-              <span className="text-light/40">POST:</span>
-              <span className="text-chartreuse font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-chartreuse animate-pulse-dot" />
-                FIXED
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Diagnosis Breakdown & RAM Tooltip Box */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
-        <div className="p-6 border border-light/10 bg-jet/60 lg:col-span-2">
-          <div className="text-xs font-bold text-chartreuse uppercase tracking-wider mb-4">
-            DIAGNOSIS TELEMETRY BREAKDOWN
+        {/* Interactive Diagnosis Mini-Game */}
+        <div className="p-4 bevel-raised bg-surface space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-lo text-xs font-bold text-accent">
+            <span>🕹️ BENCH DIAGNOSE CHALLENGE</span>
+            <span className="text-[10px] text-ink/70">SELECT ROOT CAUSE:</span>
           </div>
 
-          <div className="space-y-4 text-xs">
-            {/* RAM */}
-            <div>
-              <div className="flex justify-between mb-1">
-                <span className="text-light/90">RAM Oxidation / Seating (POST failure)</span>
-                <span className="text-chartreuse font-bold">6 / 8 (75%)</span>
+          <p className="text-xs text-ink/90">
+            <strong>Case Scenario:</strong> A laptop powers on, fans spin up to full RPM, screen stays completely pitch black, zero error beeps or splash logo. What is the root cause?
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+            <button
+              type="button"
+              onClick={() => setDiagnosePick('ram')}
+              data-pressed={diagnosePick === 'ram'}
+              className={`bevel-btn text-xs py-2 px-3 font-bold text-left justify-start ${
+                diagnosePick === 'ram' ? 'bevel-btn-primary' : ''
+              }`}
+            >
+              A) RAM Contact Oxidation
+            </button>
+            <button
+              type="button"
+              onClick={() => setDiagnosePick('ssd')}
+              data-pressed={diagnosePick === 'ssd'}
+              className={`bevel-btn text-xs py-2 px-3 font-bold text-left justify-start ${
+                diagnosePick === 'ssd' ? 'bg-[#EDE8D6]' : ''
+              }`}
+            >
+              B) Corrupted SATA SSD
+            </button>
+            <button
+              type="button"
+              onClick={() => setDiagnosePick('psu')}
+              data-pressed={diagnosePick === 'psu'}
+              className={`bevel-btn text-xs py-2 px-3 font-bold text-left justify-start ${
+                diagnosePick === 'psu' ? 'bg-[#EDE8D6]' : ''
+              }`}
+            >
+              C) Power Supply Rail Drop
+            </button>
+          </div>
+
+          {/* Reveal & Technical Explanation */}
+          {diagnosePick && (
+            <div className="mt-3 p-3 bevel-sunken bg-[#EDE8D6] text-xs space-y-2 animate-in fade-in duration-200">
+              <div className="flex items-center gap-2">
+                <span className="text-base">
+                  {diagnosePick === 'ram' ? '✅' : 'ℹ️'}
+                </span>
+                <span className="font-bold text-accent">
+                  {diagnosePick === 'ram'
+                    ? 'SPOT ON! (6 out of 8 cases)'
+                    : 'GOOD GUESS, BUT ON COLD BOOT: IT WAS RAM!'}
+                </span>
               </div>
-              <div className="w-full h-2 bg-white/5 border border-light/10">
-                <div className="h-full bg-chartreuse" style={{ width: '75%' }} />
+              <p className="text-ink/80 leading-relaxed text-[11px]">
+                The CPU must execute an initial memory training handshake before the BIOS initializes the display driver or GPU. If DDR pin contacts have microscopic surface oxidation or are unlatched, the board enters a headless freeze. Cleaning contacts with 99% isopropyl alcohol and re-seating immediately restores POST!
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* 6 / 1 / 1 Breakdown */}
+        <div className="p-4 bevel-sunken bg-[#EDE8D6] space-y-3">
+          <div className="font-bold text-accent text-xs uppercase tracking-wider">
+            BENCH REPAIR BREAKDOWN (8 MACHINES):
+          </div>
+
+          <div className="space-y-3 text-xs">
+            {/* RAM 6/8 */}
+            <div>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span className="font-bold text-ink">RAM Contact Oxidation / Pin Seating (POST failure)</span>
+                <span className="font-bold text-accent">6 / 8 (75%)</span>
+              </div>
+              <div className="w-full h-3 bevel-sunken bg-surface">
+                <div className="h-full bg-accent" style={{ width: '75%' }} />
               </div>
             </div>
 
-            {/* SSD */}
+            {/* SSD 1/8 */}
             <div>
-              <div className="flex justify-between mb-1">
-                <span className="text-light/90">Failing SATA M.2 SSD / Read-Only Controller</span>
-                <span className="text-pink font-bold">1 / 8 (12.5%)</span>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span className="font-bold text-ink">Failing SATA M.2 SSD / Read-Only Firmware Lock</span>
+                <span className="font-bold text-primary">1 / 8 (12.5%)</span>
               </div>
-              <div className="w-full h-2 bg-white/5 border border-light/10">
-                <div className="h-full bg-pink" style={{ width: '12.5%' }} />
+              <div className="w-full h-3 bevel-sunken bg-surface">
+                <div className="h-full bg-primary" style={{ width: '12.5%' }} />
               </div>
             </div>
 
-            {/* PSU */}
+            {/* PSU 1/8 */}
             <div>
-              <div className="flex justify-between mb-1">
-                <span className="text-light/90">Power Supply Rail Instability (+12V Drop)</span>
-                <span className="text-light/70 font-bold">1 / 8 (12.5%)</span>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span className="font-bold text-ink">PSU Rail Instability (+12V Drop Under Load)</span>
+                <span className="font-bold text-ink/70">1 / 8 (12.5%)</span>
               </div>
-              <div className="w-full h-2 bg-white/5 border border-light/10">
-                <div className="h-full bg-light/60" style={{ width: '12.5%' }} />
+              <div className="w-full h-3 bevel-sunken bg-surface">
+                <div className="h-full bg-[#8F8870]" style={{ width: '12.5%' }} />
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Deep RAM Tooltip Note */}
-          <div className="mt-6 p-4 border border-chartreuse/30 bg-chartreuse/[0.03] text-xs text-light/80 leading-relaxed">
-            <span className="text-chartreuse font-bold block mb-1">
-              NOTE: ALMOST ALL POST FAILURES TRACED TO RAM CONTACTS
-            </span>
-            POST must initialize memory before any video output is generated. A dirty or oxidized contact triggers an immediate black screen with zero on-screen error codes. Re-seating and cleaning pins with 99% alcohol clears surface oxidation.
+        {/* 8 Device Slots Grid */}
+        <div>
+          <div className="flex items-center justify-between mb-3 text-xs font-bold text-accent">
+            <span>HARDWARE BENCH TICKETS (CLICK TO INSPECT):</span>
+            <span className="text-[10px] text-ink/60">5 LAPTOPS · 3 PCs</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {REPAIR_DEVICES.map((dev, i) => (
+              <div
+                key={dev.id}
+                tabIndex={0}
+                role="button"
+                aria-label={`View bench ticket for slot 0${i + 1}: ${dev.type.toUpperCase()} (${dev.model})`}
+                onClick={() => handleDeviceClick(dev)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleDeviceClick(dev);
+                  }
+                }}
+                className="device-slot p-3 bevel-raised bg-surface hover:bg-[#EDE8D6] active:translate-y-0.5 cursor-pointer select-none space-y-2"
+              >
+                <div className="flex items-center justify-between text-[10px] text-ink/60 border-b border-lo pb-1">
+                  <span>SLOT 0{i + 1}</span>
+                  <span>{dev.type === 'laptop' ? '💻 LAPTOP' : '🖥️ PC'}</span>
+                </div>
+
+                <div className="font-bold text-accent text-xs truncate">
+                  {dev.model}
+                </div>
+
+                <div className="text-[10px] text-ink/70 truncate">
+                  {dev.diagnosis.toUpperCase()}: {dev.diagnosis === 'ram' ? 'Oxidation' : dev.diagnosis === 'ssd' ? 'Read-only' : '12V Rail'}
+                </div>
+
+                <div className="flex items-center justify-between text-[10px] pt-1 border-t border-lo">
+                  <span className="text-ink/60">POST:</span>
+                  <span className="text-accent font-bold">100% OK</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Featured Hardware Ticket */}
-        <div className="p-6 border border-pink/40 bg-pink/[0.02] flex flex-col justify-between">
-          <div>
-            <div className="text-[10px] text-pink uppercase font-bold tracking-widest mb-2">
-              FEATURED BENCH TICKET
-            </div>
-            <h4 className="font-display font-bold text-lg text-light mb-3">
-              {REPAIR_STATS.featuredTicket.title}
-            </h4>
-            <div className="space-y-2 text-xs text-light/70">
-              <p>
-                <strong className="text-light/90">Symptom:</strong>{' '}
-                {REPAIR_STATS.featuredTicket.symptom}
-              </p>
-              <p>
-                <strong className="text-pink">Root Cause:</strong>{' '}
-                {REPAIR_STATS.featuredTicket.rootCause}
-              </p>
-              <p>
-                <strong className="text-chartreuse">Fix:</strong>{' '}
-                {REPAIR_STATS.featuredTicket.fix}
-              </p>
-            </div>
+        <div className="p-4 bevel-raised bg-[#EDE8D6] space-y-2.5">
+          <div className="text-[10px] text-primary font-bold uppercase tracking-wider">
+            ★ FEATURED BENCH INVESTIGATION:
+          </div>
+          <h4 className="font-display font-black text-base text-accent">
+            {REPAIR_STATS.featuredTicket.title}
+          </h4>
+
+          <div className="space-y-1.5 text-xs text-ink/80">
+            <p>
+              <strong>Symptom:</strong> {REPAIR_STATS.featuredTicket.symptom}
+            </p>
+            <p>
+              <strong>Root Cause:</strong> {REPAIR_STATS.featuredTicket.rootCause}
+            </p>
+            <p>
+              <strong>Fix:</strong> {REPAIR_STATS.featuredTicket.fix}
+            </p>
           </div>
 
-          <div className="mt-6 text-[11px] font-mono text-light/40 border-t border-light/10 pt-3">
-            CLI: powercfg /requests → powercfg -requestsoverride
+          <div className="p-2 bevel-sunken bg-black text-[#55FF55] text-[11px] font-mono">
+            CLI AUDIT: powercfg /requests ➔ powercfg -requestsoverride &quot;DRIVER&quot; &quot;High Definition Audio&quot; SYSTEM
           </div>
         </div>
-      </div>
 
-      {/* Typewriter Terminal Fix Log */}
-      <div className="p-5 border border-light/10 bg-black font-mono text-xs mb-12">
-        <div className="text-light/40 text-[10px] uppercase mb-2">
-          SERIAL REPAIR LOG STREAM:
-        </div>
-        <div className="text-chartreuse space-y-1">
-          <div>[00:01:04] DIAG: Probing flea power & 19V DC input jack... OK</div>
-          <div>[00:02:18] MEM: DDR4 SO-DIMM unseated; pin oxidation identified</div>
-          <div>[00:03:42] CLEAN: 99% Isopropyl applied to gold contacts; socket blown</div>
-          <div>[00:04:12] RESEAT: Channel A locked; CMOS reset executed</div>
-          <div className="text-pink font-bold">
-            [00:04:55] POST: BEEP OK · VIDEO SIGNAL RESTORED · STATUS: FIXED
+        {/* Also Tinkers With */}
+        <div className="p-4 bevel-sunken bg-[#EDE8D6] space-y-2">
+          <span className="text-[10px] font-bold text-accent uppercase tracking-wider block">
+            WORKBENCH SKILLS &amp; TINKERING:
+          </span>
+          <div className="flex flex-wrap gap-2 text-xs">
+            {ALSO_TINKERS_WITH.map((item, idx) => (
+              <span key={idx} className="bevel-raised px-2.5 py-1 bg-surface text-ink font-semibold">
+                {item}
+              </span>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Also Tinkers With Chips */}
-      <div className="mb-12">
-        <span className="text-xs text-light/50 uppercase tracking-widest block mb-3">
-          ALSO TINKERS WITH:
-        </span>
-        <div className="flex flex-wrap gap-2">
-          {ALSO_TINKERS_WITH.map((item, idx) => (
-            <span
-              key={idx}
-              className="px-3 py-1.5 border border-light/10 bg-white/[0.02] text-xs text-chartreuse hover:border-pink hover:text-pink transition-colors cursor-default"
-            >
-              {item}
-            </span>
-          ))}
+        {/* Closer */}
+        <div className="text-center py-3 border-t border-lo text-xs text-ink/70 italic">
+          &quot;{REPAIR_STATS.closer}&quot;
         </div>
-      </div>
 
-      {/* Closer */}
-      <div className="text-center py-6 border-t border-light/10 text-sm text-light/80">
-        &quot;{REPAIR_STATS.closer}&quot;
+        {/* Modal Ticket */}
+        {selectedDevice && (
+          <RepairTicket
+            device={selectedDevice}
+            onClose={() => setSelectedDevice(null)}
+          />
+        )}
       </div>
-
-      {/* Modal Ticket */}
-      {selectedDevice && (
-        <RepairTicket
-          device={selectedDevice}
-          onClose={() => setSelectedDevice(null)}
-        />
-      )}
-    </section>
+    </OSWindow>
   );
 }

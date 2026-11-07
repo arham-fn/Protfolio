@@ -1,99 +1,67 @@
 'use client';
 
-import { useRef } from 'react';
-import { useGSAP } from '@gsap/react';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
+import React from 'react';
 import { QUEST_MILESTONES } from '@/lib/timeline';
+import OSWindow from '@/components/os/OSWindow';
 
 export default function QuestLog() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      // Clean staggered entrance for timeline cards without breaking page flow
-      ScrollTrigger.batch('.quest-card', {
-        interval: 0.1,
-        batchMax: 3,
-        onEnter: (batch) => {
-          gsap.fromTo(
-            batch,
-            { y: 30, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              stagger: 0.08,
-              ease: 'power3.out',
-              overwrite: 'auto',
-              clearProps: 'transform,opacity',
-            }
-          );
-        },
-        once: true,
-      });
-    },
-    { scope: containerRef }
-  );
-
   return (
-    <section
-      id="quest-log"
-      ref={containerRef}
-      className="relative py-24 px-6 sm:px-12 lg:px-24 border-b border-light/5"
+    <OSWindow
+      id="quest"
+      title="C:\LOGS - QUEST MILESTONES &amp; EDUCATION CHRONOLOGY"
+      icon="📜"
     >
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
-        <div>
-          <div className="text-chartreuse font-mono text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
-            <span className="w-2 h-2 bg-chartreuse inline-block" />
-            CHRONOLOGY // EDUCATION // MILESTONES
+      <div className="space-y-6 font-mono text-xs sm:text-sm">
+        {/* Intro */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-lo">
+          <div>
+            <div className="text-[11px] text-accent font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span>●</span>
+              <span>GCUF DEGREE // INDEPENDENT CURRICULUM // HARDWARE ROOTS</span>
+            </div>
+            <h2 className="font-display font-black text-2xl sm:text-4xl text-accent">
+              QUEST LOG
+            </h2>
           </div>
-          <h2 className="font-display font-black text-3xl sm:text-5xl text-light">
-            QUEST LOG
-          </h2>
+          <div className="text-xs text-ink/70 max-w-sm">
+            Strictly personal milestones: GCUF Computer Science degree and self-directed software &amp; hardware sprints.
+          </div>
         </div>
-        <div className="text-xs font-mono text-light/50 max-w-sm">
-          Strictly personal milestones: GCUF Computer Science degree and self-directed building sprints.
-        </div>
-      </div>
 
-      {/* Horizontal / Grid Scroll Container */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {QUEST_MILESTONES.map((m, idx) => (
-          <div
-            key={m.id}
-            className="quest-card p-6 bg-jet border border-light/10 hover:border-chartreuse transition-colors relative font-mono flex flex-col justify-between"
-          >
-            <div>
-              {/* Top Index & Date */}
-              <div className="flex items-center justify-between mb-4 border-b border-light/10 pb-2">
-                <span className="text-[10px] text-pink font-bold">
-                  QUEST 0{idx + 1}
-                </span>
-                <span className="text-[11px] text-chartreuse">
-                  {m.date}
-                </span>
+        {/* Quest Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {QUEST_MILESTONES.map((m, idx) => (
+            <div
+              key={m.id}
+              className="p-4 bevel-raised bg-[#EDE8D6] flex flex-col justify-between space-y-3"
+            >
+              <div>
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-lo/60 text-[10px]">
+                  <span className="font-bold text-accent">
+                    QUEST 0{idx + 1}
+                  </span>
+                  <span className="bevel-sunken px-1.5 py-0.2 bg-surface text-ink font-semibold">
+                    {m.date}
+                  </span>
+                </div>
+
+                <h3 className="font-display font-extrabold text-base text-accent mb-1.5">
+                  {m.title}
+                </h3>
+
+                <p className="text-xs text-ink/80 leading-relaxed">
+                  {m.description}
+                </p>
               </div>
 
-              {/* Title */}
-              <h3 className="font-display font-bold text-lg text-light mb-3">
-                {m.title}
-              </h3>
-
-              {/* Description */}
-              <p className="text-xs text-light/70 leading-relaxed">
-                {m.description}
-              </p>
+              <div className="pt-2 border-t border-lo flex items-center justify-between text-[10px] text-ink/60">
+                <span>SECTOR: {m.type.toUpperCase()}</span>
+                <span className="text-accent font-bold">● COMPLETED</span>
+              </div>
             </div>
-
-            {/* Footer Tag */}
-            <div className="mt-6 pt-3 border-t border-light/10 flex items-center justify-between text-[10px] text-light/40">
-              <span>TYPE: {m.type.toUpperCase()}</span>
-              <span className="text-chartreuse font-bold">COMPLETED</span>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </section>
+    </OSWindow>
   );
 }

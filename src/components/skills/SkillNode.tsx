@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import type { ExtendedSkillNode } from '@/lib/skills';
 
 interface SkillNodeProps {
@@ -56,40 +56,40 @@ export default function SkillNode({
         onHover(null);
       }}
     >
-      {/* Node Shape / Socket */}
+      {/* Bevelled Tile Socket (Beige Box OS Style) */}
       <div
-        className={`relative flex items-center justify-center transition-all duration-200 select-none ${
+        className={`relative flex items-center justify-center transition-all duration-150 select-none ${
           isCore
-            ? 'w-12 h-12 md:w-14 md:h-14 border-2 bg-jet'
-            : 'w-10 h-10 md:w-11 md:h-11 border bg-jet/90'
+            ? 'w-11 h-11 sm:w-13 sm:h-13'
+            : 'w-9 h-9 sm:w-11 sm:h-11'
         } ${
           isSelected
-            ? 'border-chartreuse bg-chartreuse/30 text-chartreuse scale-115 shadow-[0_0_20px_#B6FF00] z-40 ring-2 ring-chartreuse ring-offset-2 ring-offset-jet'
+            ? 'bevel-sunken bg-accent text-[#EFEADB] scale-110 shadow-window ring-2 ring-accent'
             : hovered
-            ? 'border-pink bg-pink/25 text-pink scale-110 shadow-[0_0_16px_rgba(255,31,142,0.8)] z-30'
+            ? 'bevel-raised bg-[#EDE8D6] text-accent scale-108 shadow-md'
             : isHighlighted
-            ? 'border-chartreuse bg-chartreuse/25 text-chartreuse scale-105 shadow-[0_0_12px_rgba(182,255,0,0.6)] z-20'
-            : 'border-chartreuse/50 text-chartreuse/90 hover:border-pink hover:text-pink'
+            ? 'bevel-raised bg-[#EDE8D6] text-accent border-accent scale-104 shadow-sm'
+            : 'bevel-raised bg-surface text-ink/90 hover:text-accent'
         }`}
       >
-        {/* SVG Sprite Reference */}
+        {/* SVG Sprite Reference (Logos only) */}
         <svg
-          className={`${isCore ? 'w-6 h-6 md:w-7 md:h-7' : 'w-5 h-5 md:w-5 md:h-5'} transition-colors duration-200 pointer-events-none`}
+          className={`${isCore ? 'w-6 h-6' : 'w-5 h-5'} pointer-events-none transition-colors duration-150`}
         >
           <use href={`#icon-${node.id}`} />
         </svg>
 
-        {/* Corner circuit pin on core nodes */}
+        {/* Core Bus Indicator Pin */}
         {isCore && (
-          <span className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-chartreuse shadow-[0_0_4px_#B6FF00]" />
+          <span className="absolute -top-1 -right-1 w-2 h-2 bg-accent bevel-raised" />
         )}
       </div>
 
-      {/* Strict Tooltip: Name ONLY on hover/focus */}
+      {/* Tooltip: Shown on hover / focus */}
       <div
         role="tooltip"
-        className={`absolute left-1/2 -translate-x-1/2 -top-8 px-2 py-0.5 bg-jet border border-chartreuse text-chartreuse font-mono text-[11px] whitespace-nowrap pointer-events-none transition-all duration-150 shadow-[0_0_8px_rgba(182,255,0,0.3)] z-50 ${
-          hovered || isSelected ? 'opacity-100 -translate-y-1' : 'opacity-0 translate-y-1'
+        className={`absolute left-1/2 -translate-x-1/2 -top-7 px-2 py-0.5 bevel-raised bg-surface text-accent font-mono font-bold text-[10px] whitespace-nowrap pointer-events-none transition-opacity duration-150 shadow-sm z-50 ${
+          hovered || isSelected ? 'opacity-100' : 'opacity-0'
         }`}
       >
         {node.name}

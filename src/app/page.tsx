@@ -1,175 +1,133 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import dynamic from 'next/dynamic';
-import BootSequence from '@/components/boot/BootSequence';
-import GlitchTransition from '@/components/shared/GlitchTransition';
-import HUDShell from '@/components/hud/HUDShell';
-import Hero from '@/components/hero/Hero';
-import NowSection from '@/components/now/NowSection';
-import SkillTree from '@/components/skills/SkillTree';
+import React, { useState, useEffect, useRef } from 'react';
+import OSHeader from '@/components/os/OSHeader';
+import Taskbar from '@/components/os/Taskbar';
+import HeroTower from '@/components/hero/HeroTower';
 import CartridgeGrid from '@/components/cartridges/CartridgeGrid';
 import RepairBay from '@/components/repair/RepairBay';
+import SkillTree from '@/components/skills/SkillTree';
+import TerminalBar from '@/components/terminal/TerminalBar';
 import QuestLog from '@/components/quest/QuestLog';
 import Contact from '@/components/contact/Contact';
-import PCBTrace from '@/components/shared/PCBTrace';
 import EasterEggManager from '@/components/easter-eggs/EasterEggManager';
-import { useClassMode, hydrateClassMode } from '@/hooks/useClassMode';
+import BiosSetup from '@/components/easter-eggs/BiosSetup';
 import { useLenis } from '@/hooks/useLenis';
-import { ScrollTrigger } from '@/lib/gsap';
-import type { BootPhase } from '@/types';
+import { useOSStore } from '@/hooks/useOSStore';
 
 export default function Home() {
-  const [phase, setPhase] = useState<BootPhase>('loading');
   const [mounted, setMounted] = useState(false);
-  const { mode } = useClassMode();
-  const mainRef = useRef<HTMLElement>(null);
+  const [biosOpen, setBiosOpen] = useState(false);
+  const { unlockAchievement } = useOSStore();
+  const footerRef = useRef<HTMLDivElement>(null);
 
   // Initialize Lenis smooth scroll
   const lenisRef = useLenis();
 
   useEffect(() => {
     setMounted(true);
-    hydrateClassMode();
 
-    // Check if already booted in this session
-    try {
-      if (sessionStorage.getItem('arham-booted') === 'true') {
-        setPhase('main');
-        return;
-      }
-    } catch {
-      setPhase('main');
-      return;
+    // Footer observer to unlock footer achievement
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          unlockAchievement('footer');
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (footerRef.current) {
+      observer.observe(footerRef.current);
     }
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      markBooted();
-      setPhase('main');
-      return;
+    return () => observer.disconnect();
+  }, [unlockAchievement]);
+
+  const handleScrollTo = (id: string) => {
+    const el = document.getElementById(id) || document.getElementById(`window-${id}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
     }
-
-    setPhase('boot');
-  }, []);
-
-  const markBooted = useCallback(() => {
-    try {
-      sessionStorage.setItem('arham-booted', 'true');
-    } catch {
-      // Ignored
-    }
-  }, []);
-
-  const handleBootComplete = useCallback(() => {
-    markBooted();
-    setPhase('glitch');
-  }, [markBooted]);
-
-  const handleGlitchComplete = useCallback(() => {
-    setPhase('main');
-  }, []);
-
-  useEffect(() => {
-    if (phase !== 'main') return;
-    const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
-      if (lenisRef.current) {
-        lenisRef.current.resize();
-      }
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [mode, phase, lenisRef]);
-
-  // Section definitions
-  const allSections = useMemo(
-    () => ({
-      hero: <Hero key="hero" />,
-      now: <NowSection key="now" />,
-      skills: <SkillTree key="skills" />,
-      cartridges: <CartridgeGrid key="cartridges" />,
-      repair: <RepairBay key="repair" />,
-      quest: <QuestLog key="quest" />,
-      contact: <Contact key="contact" />,
-    }),
-    []
-  );
-
-  const orderedSections = useMemo(() => {
-    if (mode === 'CLIENT') {
-      return [
-        allSections.hero,
-        allSections.now,
-        allSections.cartridges,
-        allSections.contact,
-        allSections.repair,
-        allSections.skills,
-        allSections.quest,
-      ];
-    } else if (mode === 'RECRUITER') {
-      return [
-        allSections.hero,
-        allSections.now,
-        allSections.quest,
-        allSections.skills,
-        allSections.cartridges,
-        allSections.contact,
-        allSections.repair,
-      ];
-    }
-
-    return [
-      allSections.hero,
-      allSections.now,
-      allSections.skills,
-      allSections.repair,
-      allSections.cartridges,
-      allSections.quest,
-      allSections.contact,
-    ];
-  }, [mode, allSections]);
+  };
 
   return (
-    <>
-      {/* SSR Initial Fallback Viewport for immediate first paint without JS */}
+    <div className="min-h-screen bg-bg text-ink flex flex-col font-mono pb-14 selection:bg-accent selection:text-[#EFEADB] overflow-x-clip">
+      {/* SSR Static Render Viewport for immediate paint without JS */}
       {!mounted && (
         <noscript>
-          <div className="min-h-screen bg-jet text-light p-8 font-mono">
-            <h1 className="font-display font-black text-5xl mb-4">ARHAM.OS</h1>
-            <p className="text-xl text-pink mb-4">
+          <div className="p-6 bg-surface border-4 border-hi text-ink font-mono">
+            <h1 className="text-3xl font-black text-accent mb-2">ARHAM — BEIGE BOX OS</h1>
+            <p className="text-base text-ink mb-4 font-bold">
               I build AI-powered apps, and I can fix the laptop you run them on.
             </p>
-            <p className="text-chartreuse">
-              JavaScript is required for the interactive 3D cartridge bay and hardware diagnostic simulator.
+            <p className="text-xs text-ink/80">
+              Personal portfolio of Arham (20, Faisalabad, PK, BS CS at GCUF). Flagship: Tech Atlas 2026. 8 Machines Fixed ($0 Invoiced).
             </p>
           </div>
         </noscript>
       )}
 
-      {/* Boot: BIOS POST sequence */}
-      {phase === 'boot' && <BootSequence onComplete={handleBootComplete} />}
+      {/* Top OS System Menu Bar */}
+      <OSHeader onOpenBios={() => setBiosOpen(true)} />
 
-      {/* Glitch: 300ms RGB-split transition */}
-      {phase === 'glitch' && (
-        <GlitchTransition onComplete={handleGlitchComplete} />
-      )}
+      {/* Main OS Desktop / Document Container */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-6 space-y-8">
+        {/* Hero Section: Beige Tower PC + CRT Monitor */}
+        <section id="hero" className="scroll-mt-14">
+          <HeroTower onScrollToSection={handleScrollTo} />
+        </section>
 
-      {/* Main site */}
-      {(phase === 'main' || (!mounted && phase === 'loading')) && (
-        <div className="scanlines">
-          <HUDShell>
-            <div className="relative">
-              {/* Glowing PCB Trace SVG line drawing through sections */}
-              <PCBTrace />
+        {/* Section 1: Projects Floppy Archive */}
+        <section id="projects" className="scroll-mt-14">
+          <CartridgeGrid />
+        </section>
 
-              {/* Dynamic Sections Container */}
-              <main ref={mainRef} className="relative z-10 transition-opacity duration-300">
-                {orderedSections}
-              </main>
-            </div>
-          </HUDShell>
-          <EasterEggManager />
+        {/* Section 2: Repair Bay Diagnostics */}
+        <section id="repair" className="scroll-mt-14">
+          <RepairBay />
+        </section>
+
+        {/* Section 3: Skill Tree Topology */}
+        <section id="skills" className="scroll-mt-14">
+          <SkillTree />
+        </section>
+
+        {/* Section 4: ARHAM-DOS Terminal Console */}
+        <section id="terminal" className="scroll-mt-14">
+          <TerminalBar />
+        </section>
+
+        {/* Section 5: Quest Milestones Log */}
+        <section id="quest" className="scroll-mt-14">
+          <QuestLog />
+        </section>
+
+        {/* Section 6: Serial Communication / Contact */}
+        <section id="contact" className="scroll-mt-14">
+          <Contact />
+        </section>
+
+        {/* Footer Intersection Sentinel (Unlocks achievement 8) */}
+        <div
+          ref={footerRef}
+          className="text-center py-6 text-xs text-ink/60 font-mono border-t border-lo/60 space-y-1"
+        >
+          <div>
+            ARHAM OS // FAISALABAD, PAKISTAN // 31.4504° N, 73.1350° E
+          </div>
+          <div className="text-[11px] text-ink/40">
+            Award Modular BIOS v4.51PG · All sectors read OK · Pro bono hardware fixes.
+          </div>
         </div>
-      )}
-    </>
+      </main>
+
+      {/* Late-90s Bottom Taskbar & System Tray */}
+      <Taskbar onOpenBios={() => setBiosOpen(true)} />
+
+      {/* Easter Egg & BIOS Modals */}
+      <EasterEggManager />
+      <BiosSetup isOpen={biosOpen} onClose={() => setBiosOpen(false)} />
+    </div>
   );
 }

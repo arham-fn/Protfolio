@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
+import { useOSStore } from '@/hooks/useOSStore';
 
 interface BiosSetupProps {
   isOpen: boolean;
@@ -8,89 +9,83 @@ interface BiosSetupProps {
 }
 
 export default function BiosSetup({ isOpen, onClose }: BiosSetupProps) {
-  const [accent, setAccent] = useState<'pink' | 'chartreuse'>('pink');
-  const [reduceMotion, setReduceMotion] = useState(false);
-  const [scanlines, setScanlines] = useState(true);
+  const { turbo, toggleTurbo, unlockAchievement } = useOSStore();
 
   if (!isOpen) return null;
-
-  const toggleAccent = () => {
-    const next = accent === 'pink' ? 'chartreuse' : 'pink';
-    setAccent(next);
-    document.documentElement.style.setProperty(
-      '--color-accent',
-      next === 'pink' ? '#FF1F8E' : '#B6FF00'
-    );
-  };
-
-  const toggleMotion = () => {
-    setReduceMotion(!reduceMotion);
-    document.documentElement.classList.toggle('prefers-reduced-motion', !reduceMotion);
-  };
-
-  const toggleScanlines = () => {
-    setScanlines(!scanlines);
-    document.body.classList.toggle('scanlines', !scanlines);
-  };
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-blue-950/90 font-mono text-light backdrop-blur-md"
+      className="fixed inset-0 z-[600] flex items-center justify-center p-3 sm:p-6 bg-black/80 font-mono text-white backdrop-blur-xs select-none"
     >
-      <div className="w-full max-w-2xl bg-blue-900 border-4 border-light/60 p-6 shadow-2xl">
-        {/* BIOS Header */}
-        <div className="border-b border-light/40 pb-2 mb-6 flex justify-between items-center text-xs">
-          <span>ARHAM BIOS UTILITY SETUP (REV 2026.10)</span>
-          <span>PRESS [ESC] TO EXIT</span>
+      <div className="w-full max-w-3xl bg-[#0000AA] border-4 border-[#AAAAAA] p-4 sm:p-6 shadow-2xl text-xs sm:text-sm">
+        {/* BIOS Top Header */}
+        <div className="border-b-2 border-white pb-2 mb-4 flex justify-between items-center text-[#FFFF55] font-bold text-xs sm:text-sm">
+          <span>ROM PCI/ISA BIOS (2A69KG0B)</span>
+          <span>CMOS SETUP UTILITY — AWARD SOFTWARE, INC.</span>
         </div>
 
-        {/* Setting Toggles */}
-        <div className="space-y-4 text-xs sm:text-sm">
-          <div className="flex justify-between items-center p-2 border border-light/20 bg-blue-950/50">
-            <span>SYSTEM ACCENT COLOR:</span>
-            <button
-              type="button"
-              onClick={toggleAccent}
-              className="px-3 py-1 bg-light text-blue-950 font-bold uppercase"
-            >
-              [{accent.toUpperCase()}]
-            </button>
+        {/* BIOS Grid Menu */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-white">
+          <div className="p-3 border border-white/40 bg-[#000088] space-y-2">
+            <span className="text-[#55FFFF] font-bold block">STANDARD CMOS SETUP</span>
+            <p className="text-[11px] text-white/80">
+              Primary Master: 1.44MB Floppy (A:)<br />
+              System RAM: 16MB SDRAM 100MHz<br />
+              POST Diagnostic: 8/8 Machines Fixed
+            </p>
           </div>
 
-          <div className="flex justify-between items-center p-2 border border-light/20 bg-blue-950/50">
-            <span>REDUCE MOTION OVERRIDE:</span>
-            <button
-              type="button"
-              onClick={toggleMotion}
-              className="px-3 py-1 bg-light text-blue-950 font-bold uppercase"
-            >
-              [{reduceMotion ? 'ENABLED' : 'DISABLED'}]
-            </button>
+          <div className="p-3 border border-white/40 bg-[#000088] space-y-2">
+            <span className="text-[#55FFFF] font-bold block">ADVANCED CHIPSET FEATURES</span>
+            <div className="flex items-center justify-between text-xs pt-1">
+              <span>TURBO CPU CLOCK:</span>
+              <button
+                type="button"
+                onClick={toggleTurbo}
+                className="px-2 py-0.5 bg-[#FFFF55] text-[#0000AA] font-bold text-xs"
+              >
+                [{turbo ? '66 MHz (ENABLED)' : '33 MHz (DISABLED)'}]
+              </button>
+            </div>
+            <p className="text-[10px] text-white/70">
+              Affects animation speed and transition multiplier.
+            </p>
           </div>
 
-          <div className="flex justify-between items-center p-2 border border-light/20 bg-blue-950/50">
-            <span>CRT SCANLINE EMULATION (4%):</span>
-            <button
-              type="button"
-              onClick={toggleScanlines}
-              className="px-3 py-1 bg-light text-blue-950 font-bold uppercase"
-            >
-              [{scanlines ? 'ENABLED' : 'DISABLED'}]
-            </button>
+          <div className="p-3 border border-white/40 bg-[#000088] space-y-2">
+            <span className="text-[#55FFFF] font-bold block">INTEGRATED PERIPHERALS</span>
+            <p className="text-[11px] text-white/80">
+              COM1: Serial Packet Dispatch (Active)<br />
+              IDE-0: Tech Atlas 2026 (Flagship Master)<br />
+              IDE-1: DisasterShield Capstone
+            </p>
+          </div>
+
+          <div className="p-3 border border-white/40 bg-[#000088] space-y-2">
+            <span className="text-[#55FFFF] font-bold block">SECURITY &amp; SYSTEM HEALTH</span>
+            <p className="text-[11px] text-white/80">
+              Core CPU Temp: 34°C (Normal)<br />
+              +12V Rail: 12.08V (Stable)<br />
+              POST Code: 0x00 (Normal Boot)
+            </p>
           </div>
         </div>
 
-        {/* BIOS Help Footer */}
-        <div className="mt-8 border-t border-light/40 pt-3 text-[11px] text-light/70 flex justify-between">
-          <span>F2 = TOGGLE SETUP</span>
+        {/* Instructions Footer */}
+        <div className="mt-6 border-t-2 border-white pt-3 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#FFFF55]">
+          <span>ESC : Quit Setup</span>
+          <span>F2 : Toggle Screen</span>
           <button
             type="button"
-            onClick={onClose}
-            className="text-yellow-300 hover:underline"
+            onClick={() => {
+              unlockAchievement('bios');
+              onClose();
+            }}
+            className="px-3 py-1 bg-[#FFFF55] text-[#0000AA] font-black uppercase hover:bg-white transition-colors"
           >
-            [SAVE & REBOOT CHASSIS]
+            [SAVE &amp; EXIT SETUP (REBOOT)]
           </button>
         </div>
       </div>

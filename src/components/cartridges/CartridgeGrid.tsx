@@ -1,87 +1,89 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import dynamic from 'next/dynamic';
-import { useGSAP } from '@gsap/react';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
+import React, { useState } from 'react';
 import { PROJECTS } from '@/lib/projects';
-import Cartridge from './Cartridge';
+import FloppyCartridge from './FloppyCartridge';
+import CaseStudy from './CaseStudy';
+import OSWindow from '@/components/os/OSWindow';
 import type { Project } from '@/types';
-import { useClassMode } from '@/hooks/useClassMode';
-
-const CaseStudy = dynamic(() => import('./CaseStudy'), {
-  ssr: false,
-});
+import { useOSStore } from '@/hooks/useOSStore';
 
 export default function CartridgeGrid() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const { mode } = useClassMode();
+  const { unlockAchievement } = useOSStore();
 
-  useGSAP(
-    () => {
-      ScrollTrigger.batch('.cartridge-item', {
-        interval: 0.08,
-        batchMax: 4,
-        onEnter: (batch) => {
-          gsap.fromTo(
-            batch,
-            { y: 40, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              stagger: 0.06,
-              ease: 'power3.out',
-              overwrite: 'auto',
-              clearProps: 'transform,opacity',
-            }
-          );
-        },
-        once: true,
-      });
-    },
-    { scope: containerRef }
-  );
+  const handleHiddenFloppyClick = () => {
+    unlockAchievement('hidden_floppy');
+    alert('🏆 EASTER EGG UNLOCKED!\nYou found the hidden 1.44MB floppy cartridge tucked behind the drive rack.');
+  };
 
   return (
-    <section
-      id="cartridges"
-      ref={containerRef}
-      className="relative py-24 px-6 sm:px-12 lg:px-24 border-b border-light/5"
+    <OSWindow
+      id="projects"
+      title="A:\PROJECTS - FLOPPY DISK ARCHIVE (1.44MB HD)"
+      icon="💾"
     >
-      {/* Headline + One Line Rule */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
-        <div>
-          <div className="text-chartreuse font-mono text-xs uppercase tracking-widest mb-1.5 flex items-center gap-2">
-            <span className="w-2 h-2 bg-chartreuse inline-block animate-pulse-dot" />
-            ROM ARCHIVE // PRODUCTION DEPLOYMENTS
+      <div className="space-y-6">
+        {/* Section Intro */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-lo">
+          <div>
+            <div className="text-[11px] font-mono text-accent font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span>●</span>
+              <span>READ-ONLY MEMORY CARTRIDGES // 7 SYSTEMS</span>
+            </div>
+            <h2 className="font-display font-black text-2xl sm:text-4xl text-accent">
+              PROJECT ARCHIVE
+            </h2>
           </div>
-          <h2 className="font-display font-black text-3xl sm:text-5xl text-light">
-            PROJECT CARTRIDGES
-          </h2>
+          <p className="text-xs font-mono text-ink/70 max-w-sm">
+            Select any 3.5&quot; floppy diskette to insert into the drive and examine system architectures and live deployments.
+          </p>
         </div>
-        <p className="text-xs font-mono text-light/60 max-w-sm">
-          Select any cartridge to insert into the chassis and review technical telemetry, architectures, and outcomes.
-        </p>
-      </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {PROJECTS.map((proj) => (
-          <div key={proj.id} id={proj.id} className="cartridge-item scroll-mt-20">
-            <Cartridge project={proj} onSelect={setSelectedProject} />
+        {/* Grid of Floppy Cartridges */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {PROJECTS.map((proj) => (
+            <div key={proj.id} id={proj.id} className="scroll-mt-20">
+              <FloppyCartridge project={proj} onSelect={setSelectedProject} />
+            </div>
+          ))}
+
+          {/* Hidden Easter Egg Floppy Diskette */}
+          <div
+            tabIndex={0}
+            role="button"
+            aria-label="Secret diagnostics floppy diskette. Click to inspect."
+            onClick={handleHiddenFloppyClick}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleHiddenFloppyClick();
+              }
+            }}
+            className="p-3 bevel-raised bg-[#A8A086] border border-dashed border-lo cursor-pointer hover:brightness-105 active:scale-98 transition-all flex flex-col justify-between"
+          >
+            <div className="h-6 bevel-sunken bg-[#8C846C] flex items-center justify-between px-2 text-[9px] font-bold text-ink/60">
+              <span>2DD 720KB</span>
+              <span className="text-primary font-bold">★ HIDDEN</span>
+            </div>
+            <div className="my-2 p-2 bg-[#DDD7C2] bevel-sunken text-[10px] space-y-1">
+              <div className="font-bold text-accent">DIAG_RESTORE_DISK_v1.0</div>
+              <div className="text-ink/60 italic text-[9px]">Emergency POST diagnostics utilities.</div>
+            </div>
+            <div className="text-[9px] text-accent font-bold text-right">
+              [INSPECT DISK 🔍]
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Modal Case Study */}
-      {selectedProject && (
-        <CaseStudy
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-        />
-      )}
-    </section>
+        {/* Modal Case Study Window */}
+        {selectedProject && (
+          <CaseStudy
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
+        )}
+      </div>
+    </OSWindow>
   );
 }

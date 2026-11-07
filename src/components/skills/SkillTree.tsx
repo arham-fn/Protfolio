@@ -1,17 +1,21 @@
 'use client';
 
-import { useState, useRef, useMemo } from 'react';
-import { useGSAP } from '@gsap/react';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
+import React, { useState, useMemo } from 'react';
 import { SKILL_NODES, type ExtendedSkillNode } from '@/lib/skills';
 import SkillSprites from './SkillSprites';
 import SkillNode from './SkillNode';
-import { EASE } from '@/lib/tokens';
+import OSWindow from '@/components/os/OSWindow';
+import { useOSStore } from '@/hooks/useOSStore';
 
 export default function SkillTree() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [activeHoverId, setActiveHoverId] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<ExtendedSkillNode | null>(null);
+  const { trackSkillClick } = useOSStore();
+
+  const handleSelectNode = (node: ExtendedSkillNode) => {
+    trackSkillClick(node.id);
+    setSelectedNode((prev) => (prev?.id === node.id ? null : node));
+  };
 
   // Pre-calculate line connections with clean ortholine segments
   const edges = useMemo(() => {
@@ -36,176 +40,152 @@ export default function SkillTree() {
     return list;
   }, []);
 
-  // GSAP Batch Entrance
-  useGSAP(
-    () => {
-      ScrollTrigger.batch('.skill-tree-node', {
-        interval: 0.05,
-        batchMax: 6,
-        onEnter: (batch) => {
-          gsap.fromTo(
-            batch,
-            { scale: 0.2, opacity: 0 },
-            {
-              scale: 1,
-              opacity: 1,
-              ease: EASE.bounce,
-              stagger: 0.04,
-              duration: 0.45,
-              overwrite: 'auto',
-              clearProps: 'transform,opacity',
-            }
-          );
-        },
-        once: true,
-      });
-    },
-    { scope: containerRef }
-  );
-
   return (
-    <section
+    <OSWindow
       id="skills"
-      ref={containerRef}
-      className="relative py-20 px-6 sm:px-12 lg:px-24 border-b border-light/5 overflow-hidden"
+      title="C:\SYSTEM - SKILL TOPOLOGY &amp; RUNTIMES (18 NODES)"
+      icon="⚡"
     >
-      <SkillSprites />
+      <div className="space-y-6 font-mono text-xs">
+        <SkillSprites />
 
-      {/* Headline + One Line Subhead Rule */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
-        <div>
-          <div className="text-pink font-mono text-xs uppercase tracking-widest mb-1.5 flex items-center gap-2">
-            <span className="w-2 h-2 bg-pink inline-block animate-ping" />
-            TOPOLOGY // RUNTIMES
+        {/* Header Intro */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-lo">
+          <div>
+            <div className="text-[11px] text-accent font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span>●</span>
+              <span>CIRCUIT BUS ARCHITECTURE // LOGOS ONLY // ARIA-LABELED</span>
+            </div>
+            <h2 className="font-display font-black text-2xl sm:text-4xl text-accent">
+              SKILL TREE
+            </h2>
           </div>
-          <h2 className="font-display font-black text-3xl sm:text-5xl text-light">
-            SKILL TREE
-          </h2>
+          <p className="text-xs text-ink/70 max-w-sm">
+            Interactive circuit topology. Click or tap any bevelled chip to view its real-world implementation telemetry.
+          </p>
         </div>
-        <p className="text-xs font-mono text-light/60 max-w-sm">
-          Interactive node diagram. Click or tap any chip to inspect real project implementation.
-        </p>
-      </div>
 
-      {/* Main Interactive Circuit Graph */}
-      <div className="relative w-full border border-light/10 bg-jet/80 backdrop-blur-sm overflow-hidden p-2 sm:p-4">
-        {/* Aspect Ratio Canvas */}
-        <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] min-h-[420px] max-h-[640px]">
-          {/* Subtle Circuit Grid */}
+        {/* Main Circuit Canvas */}
+        <div className="p-3 sm:p-5 bevel-sunken bg-[#EDE8D6] relative overflow-hidden">
+          {/* Subtle PCB dot matrix */}
           <div
-            className="absolute inset-0 pointer-events-none opacity-20"
+            className="absolute inset-0 pointer-events-none opacity-25"
             style={{
               backgroundImage:
-                'radial-gradient(circle, rgba(182, 255, 0, 0.25) 1px, transparent 1px)',
+                'radial-gradient(circle, #1E3FA0 1px, transparent 1px)',
               backgroundSize: '24px 24px',
             }}
           />
 
-          {/* Dynamic Connection Lines (SVG) */}
-          <svg
-            className="absolute inset-0 w-full h-full pointer-events-none z-10"
-            viewBox="0 0 1000 600"
-            preserveAspectRatio="none"
-          >
-            {edges.map((edge, idx) => {
-              const isPathActive =
-                activeHoverId === edge.from ||
-                activeHoverId === edge.to ||
-                selectedNode?.id === edge.from ||
-                selectedNode?.id === edge.to;
-              return (
-                <g key={idx}>
-                  {/* Glowing backlight on hover */}
-                  {isPathActive && (
+          {/* Coordinate Canvas Box */}
+          <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] min-h-[380px] max-h-[580px]">
+            {/* SVG Connection Traces (Lit path in accent blue #1E3FA0) */}
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none z-10"
+              viewBox="0 0 1000 600"
+              preserveAspectRatio="none"
+            >
+              {edges.map((edge, idx) => {
+                const isPathActive =
+                  activeHoverId === edge.from ||
+                  activeHoverId === edge.to ||
+                  selectedNode?.id === edge.from ||
+                  selectedNode?.id === edge.to;
+                return (
+                  <g key={idx}>
+                    {/* Glowing backlight trace in Accent Blue */}
+                    {isPathActive && (
+                      <line
+                        x1={edge.x1}
+                        y1={edge.y1}
+                        x2={edge.x2}
+                        y2={edge.y2}
+                        stroke="#1E3FA0"
+                        strokeWidth="5"
+                        strokeOpacity="0.4"
+                      />
+                    )}
+                    {/* Primary Trace */}
                     <line
                       x1={edge.x1}
                       y1={edge.y1}
                       x2={edge.x2}
                       y2={edge.y2}
-                      stroke="#B6FF00"
-                      strokeWidth="5"
-                      strokeOpacity="0.4"
+                      stroke={isPathActive ? '#1E3FA0' : '#8F8870'}
+                      strokeWidth={isPathActive ? '2.5' : '1.5'}
+                      strokeDasharray={isPathActive ? 'none' : '4 4'}
+                      className="transition-all duration-200"
                     />
-                  )}
-                  {/* Primary Trace */}
-                  <line
-                    x1={edge.x1}
-                    y1={edge.y1}
-                    x2={edge.x2}
-                    y2={edge.y2}
-                    stroke={isPathActive ? '#B6FF00' : 'rgba(182, 255, 0, 0.25)'}
-                    strokeWidth={isPathActive ? '2.5' : '1.2'}
-                    strokeDasharray={isPathActive ? 'none' : '4 4'}
-                    className="transition-all duration-200"
+                  </g>
+                );
+              })}
+            </svg>
+
+            {/* Interactive Logo Nodes (Bevelled Tiles) */}
+            {SKILL_NODES.map((node) => {
+              const isHighlighted =
+                (activeHoverId !== null &&
+                  (activeHoverId === node.id ||
+                    node.connections.includes(activeHoverId) ||
+                    SKILL_NODES.find((n) => n.id === activeHoverId)?.connections.includes(node.id))) ||
+                (selectedNode !== null &&
+                  (selectedNode.id === node.id ||
+                    node.connections.includes(selectedNode.id) ||
+                    SKILL_NODES.find((n) => n.id === selectedNode.id)?.connections.includes(node.id)));
+
+              return (
+                <div key={node.id} className="skill-tree-node">
+                  <SkillNode
+                    node={node}
+                    isHighlighted={Boolean(isHighlighted)}
+                    isSelected={selectedNode?.id === node.id}
+                    onHover={setActiveHoverId}
+                    onSelect={handleSelectNode}
                   />
-                </g>
+                </div>
               );
             })}
-          </svg>
-
-          {/* Interactive Logo Nodes */}
-          {SKILL_NODES.map((node) => {
-            const isHighlighted =
-              (activeHoverId !== null &&
-                (activeHoverId === node.id ||
-                  node.connections.includes(activeHoverId) ||
-                  SKILL_NODES.find((n) => n.id === activeHoverId)?.connections.includes(node.id))) ||
-              (selectedNode !== null &&
-                (selectedNode.id === node.id ||
-                  node.connections.includes(selectedNode.id) ||
-                  SKILL_NODES.find((n) => n.id === selectedNode.id)?.connections.includes(node.id)));
-
-            return (
-              <div key={node.id} className="skill-tree-node">
-                <SkillNode
-                  node={node}
-                  isHighlighted={Boolean(isHighlighted)}
-                  isSelected={selectedNode?.id === node.id}
-                  onHover={setActiveHoverId}
-                  onSelect={(node) =>
-                    setSelectedNode((prev) => (prev?.id === node.id ? null : node))
-                  }
-                />
-              </div>
-            );
-          })}
+          </div>
         </div>
-      </div>
 
-      {/* Selected Node Details Drawer */}
-      {selectedNode && (
-        <div
-          role="region"
-          aria-live="polite"
-          className="mt-6 p-5 border-2 border-chartreuse bg-jet/95 font-mono text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[0_0_24px_rgba(182,255,0,0.25)] animate-in fade-in slide-in-from-bottom-2 duration-200"
-        >
-          <div className="space-y-1 max-w-2xl">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-chartreuse animate-pulse-dot" />
-              <span className="font-bold text-chartreuse uppercase tracking-wider text-sm">
-                {selectedNode.name}
-              </span>
-              <span className="text-[10px] text-light/40 uppercase">
-                [{selectedNode.category}]
-              </span>
+        {/* Selected Node Details Drawer */}
+        {selectedNode && (
+          <div
+            role="region"
+            aria-live="polite"
+            className="p-4 bevel-raised bg-surface space-y-2 border-2 border-accent animate-in fade-in duration-200"
+          >
+            <div className="flex items-center justify-between border-b border-lo pb-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
+                <span className="font-bold text-accent uppercase text-sm">
+                  {selectedNode.name}
+                </span>
+                <span className="text-[10px] bevel-sunken px-2 py-0.2 bg-[#EDE8D6] uppercase text-ink/70">
+                  [{selectedNode.category}]
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedNode(null)}
+                className="win-btn hover:bg-primary"
+                title="Close telemetry"
+              >
+                ✕
+              </button>
             </div>
-            <p className="text-light/90 leading-relaxed pt-1">
-              <strong className="text-pink">WHAT I USE IT FOR:</strong> {selectedNode.usage}
+
+            <p className="text-xs text-ink/90 pt-1 leading-relaxed">
+              <strong className="text-accent uppercase">WHAT I USE IT FOR:</strong> {selectedNode.usage}
             </p>
-            <p className="text-light/60">
-              <strong className="text-chartreuse">ACTIVE PROJECT:</strong> {selectedNode.project}
+
+            <p className="text-xs text-ink/80">
+              <strong className="text-primary uppercase">ACTIVE PROJECT:</strong> {selectedNode.project}
             </p>
           </div>
-
-          <button
-            type="button"
-            onClick={() => setSelectedNode(null)}
-            className="px-3 py-1.5 border border-pink text-pink hover:bg-pink hover:text-white transition-colors uppercase font-bold text-[11px] shrink-0"
-          >
-            [CLOSE TELEMETRY]
-          </button>
-        </div>
-      )}
-    </section>
+        )}
+      </div>
+    </OSWindow>
   );
 }

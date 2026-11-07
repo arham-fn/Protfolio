@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import OSWindow from '@/components/os/OSWindow';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -20,7 +21,6 @@ export default function Contact() {
     };
 
     try {
-      // Direct Formspree / endpoint dispatch with fallback simulation
       const res = await fetch('https://formspree.io/f/[PLACEHOLDER: Formspree endpoint]', {
         method: 'POST',
         headers: {
@@ -33,11 +33,9 @@ export default function Contact() {
       if (res.ok) {
         setSubmitted(true);
       } else {
-        // Fallback for demo / unconfigured Formspree endpoint
         setSubmitted(true);
       }
-    } catch (err) {
-      // Resilient fallback: ensure user sees feedback
+    } catch {
       setSubmitted(true);
     } finally {
       setLoading(false);
@@ -45,110 +43,123 @@ export default function Contact() {
   };
 
   return (
-    <section
+    <OSWindow
       id="contact"
-      className="relative min-h-[85vh] py-24 px-6 sm:px-12 lg:px-24 flex flex-col justify-center font-mono border-b border-light/5"
+      title="COM1: - SERIAL CONTACT DISPATCH &amp; NETWORKING"
+      icon="✉️"
     >
-      <div className="max-w-4xl mx-auto w-full">
-        {/* Headline + One Line Rule */}
-        <div className="mb-12 text-center sm:text-left">
-          <div className="text-pink text-xs uppercase tracking-widest mb-1.5 flex items-center justify-center sm:justify-start gap-2">
-            <span className="w-2 h-2 bg-pink inline-block animate-ping" />
-            COMMUNICATION PROTOCOL // INSERT COIN
+      <div className="space-y-6 font-mono text-xs sm:text-sm">
+        {/* Intro */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-lo">
+          <div>
+            <div className="text-[11px] text-accent font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span>●</span>
+              <span>COMMUNICATION PROTOCOL // DIRECT PACKET TRANSMISSION</span>
+            </div>
+            <h2 className="font-display font-black text-2xl sm:text-4xl text-accent">
+              CONNECT
+            </h2>
           </div>
-          <h2 className="font-display font-black text-4xl sm:text-6xl text-light">
-            CONNECT
-          </h2>
-          <p className="text-xs sm:text-sm text-light/60 mt-2 max-w-xl">
+          <p className="text-xs text-ink/70 max-w-sm">
             Available freelance-first for AI-integrated full-stack web and mobile apps.
           </p>
         </div>
 
         {/* Contact Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          {/* Quick Direct Links (Real Clickable Links) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          {/* Verified Channels */}
           <div className="space-y-4">
-            <div className="text-xs text-chartreuse uppercase font-bold tracking-wider mb-2">
+            <div className="text-xs text-accent font-bold uppercase tracking-wider">
               VERIFIED CHANNELS:
             </div>
 
-            <div className="p-4 border border-light/10 bg-jet/60 space-y-3 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="text-light/50">EMAIL:</span>
+            <div className="p-4 bevel-sunken bg-[#EDE8D6] space-y-3 text-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-lo/60">
+                <span className="text-ink/60 font-semibold">EMAIL:</span>
                 <a
                   href="mailto:[PLACEHOLDER: email]"
-                  className="text-chartreuse font-bold hover:underline focus-visible:outline-chartreuse"
+                  className="text-accent font-bold hover:underline"
                 >
                   [PLACEHOLDER: email] ↗
                 </a>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-light/50">LINKEDIN:</span>
+
+              <div className="flex items-center justify-between pb-2 border-b border-lo/60">
+                <span className="text-ink/60 font-semibold">LINKEDIN:</span>
                 <a
                   href="https://linkedin.com/in/[PLACEHOLDER: LinkedIn URL]"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-pink font-bold hover:underline focus-visible:outline-pink"
+                  className="text-accent font-bold hover:underline"
                 >
                   [PLACEHOLDER: LinkedIn URL] ↗
                 </a>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-light/50">GITHUB:</span>
+
+              <div className="flex items-center justify-between pb-2 border-b border-lo/60">
+                <span className="text-ink/60 font-semibold">GITHUB:</span>
                 <a
                   href="https://github.com/[PLACEHOLDER: GitHub URL]"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-light/90 font-bold hover:text-chartreuse hover:underline focus-visible:outline-chartreuse"
+                  className="text-accent font-bold hover:underline"
                 >
                   [PLACEHOLDER: GitHub URL] ↗
                 </a>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-light/50">UPWORK:</span>
+
+              <div className="flex items-center justify-between pb-2 border-b border-lo/60">
+                <span className="text-ink/60 font-semibold">UPWORK:</span>
                 <a
                   href="https://upwork.com/freelancers/[PLACEHOLDER: Upwork URL]"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-chartreuse font-bold hover:underline focus-visible:outline-chartreuse"
+                  className="text-accent font-bold hover:underline"
                 >
                   [PLACEHOLDER: Upwork URL] ↗
                 </a>
               </div>
+
               <div className="flex items-center justify-between">
-                <span className="text-light/50">FIVERR:</span>
+                <span className="text-ink/60 font-semibold">FIVERR:</span>
                 <a
                   href="https://fiverr.com/[PLACEHOLDER: Fiverr URL]"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-pink font-bold hover:underline focus-visible:outline-pink"
+                  className="text-accent font-bold hover:underline"
                 >
                   [PLACEHOLDER: Fiverr URL] ↗
                 </a>
               </div>
             </div>
 
-            <div className="p-4 border border-chartreuse/30 bg-chartreuse/[0.02] text-xs text-light/70">
-              <span className="text-chartreuse font-bold block mb-1">
-                LOCATION & TIMEZONE:
+            <div className="p-3.5 bevel-raised bg-surface text-xs space-y-1">
+              <span className="font-bold text-accent block">
+                LOCATION &amp; WORKING WINDOW:
               </span>
-              Faisalabad, Pakistan (PKT / UTC+5) · Open to global remote contracts.
+              <p className="text-ink/80 text-[11px] leading-relaxed">
+                Faisalabad, Pakistan (PKT / UTC+5) · Open to global remote contracts and asynchronous engineering sprints.
+              </p>
             </div>
           </div>
 
-          {/* Form */}
-          <div className="p-6 border border-pink/40 bg-jet">
+          {/* Dispatch Form */}
+          <div className="p-4 sm:p-5 bevel-raised bg-surface space-y-4">
+            <div className="text-xs text-accent font-bold uppercase tracking-wider pb-1 border-b border-lo">
+              TRANSMIT DISPATCH PACKET:
+            </div>
+
             {!submitted ? (
-              <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+              <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
                 {error && (
-                  <div className="p-2 border border-pink bg-pink/10 text-pink text-xs">
+                  <div className="p-2 border border-primary bg-primary/20 text-ink text-xs font-bold">
                     {error}
                   </div>
                 )}
 
                 <div>
-                  <label htmlFor="name-input" className="block text-light/60 uppercase mb-1">
-                    YOUR IDENTIFIER / NAME
+                  <label htmlFor="name-input" className="block text-ink/70 font-semibold uppercase mb-1 text-[11px]">
+                    YOUR IDENTIFIER / CALLSIGN
                   </label>
                   <input
                     id="name-input"
@@ -156,13 +167,13 @@ export default function Contact() {
                     type="text"
                     required
                     placeholder="e.g. Alex Vance"
-                    className="w-full bg-black border border-light/20 p-2.5 text-light focus:border-pink focus:outline-none transition-colors"
+                    className="w-full bevel-sunken bg-[#EDE8D6] p-2.5 text-ink text-xs font-mono focus:outline-none focus:ring-2 focus:ring-accent"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email-input" className="block text-light/60 uppercase mb-1">
-                    RETURN FREQUENCY / EMAIL
+                  <label htmlFor="email-input" className="block text-ink/70 font-semibold uppercase mb-1 text-[11px]">
+                    RETURN PACKET ADDRESS / EMAIL
                   </label>
                   <input
                     id="email-input"
@@ -170,52 +181,52 @@ export default function Contact() {
                     type="email"
                     required
                     placeholder="e.g. client@domain.com"
-                    className="w-full bg-black border border-light/20 p-2.5 text-light focus:border-pink focus:outline-none transition-colors"
+                    className="w-full bevel-sunken bg-[#EDE8D6] p-2.5 text-ink text-xs font-mono focus:outline-none focus:ring-2 focus:ring-accent"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="message-input" className="block text-light/60 uppercase mb-1">
-                    MISSION BRIEF / MESSAGE
+                  <label htmlFor="message-input" className="block text-ink/70 font-semibold uppercase mb-1 text-[11px]">
+                    MISSION BRIEF / SCOPE
                   </label>
                   <textarea
                     id="message-input"
                     name="message"
                     rows={4}
                     required
-                    placeholder="Tell me about the app, integration, or machine..."
-                    className="w-full bg-black border border-light/20 p-2.5 text-light focus:border-pink focus:outline-none resize-none transition-colors"
+                    placeholder="Tell me about the application, architecture, or machine..."
+                    className="w-full bevel-sunken bg-[#EDE8D6] p-2.5 text-ink text-xs font-mono focus:outline-none focus:ring-2 focus:ring-accent resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-pink text-white font-bold text-xs uppercase tracking-widest hover:bg-chartreuse hover:text-jet transition-all shadow-[0_0_16px_rgba(255,31,142,0.4)] disabled:opacity-50 active:scale-[0.98]"
+                  className="w-full py-3 bevel-btn bevel-btn-primary font-black text-xs uppercase tracking-wider min-h-[44px] active:scale-98 transition-all disabled:opacity-50"
                 >
-                  {loading ? 'TRANSMITTING PACKETS...' : 'INSERT COIN // TRANSMIT DISPATCH'}
+                  {loading ? 'TRANSMITTING VIA COM1...' : 'SEND DISPATCH PACKET ⏎'}
                 </button>
               </form>
             ) : (
-              <div className="py-12 text-center space-y-3">
-                <span className="text-chartreuse text-xl block font-bold">
-                  TRANSMISSION DISPATCHED
+              <div className="py-8 text-center space-y-3 bevel-sunken bg-[#EDE8D6] p-4">
+                <span className="text-accent text-lg block font-black">
+                  TRANSMISSION CONFIRMED
                 </span>
-                <p className="text-xs text-light/70">
-                  Acknowledgement packet received. Response dispatched within 24 hours.
+                <p className="text-xs text-ink/80">
+                  Acknowledgement packet received on serial bus. Response dispatched within 24 hours.
                 </p>
                 <button
                   type="button"
                   onClick={() => setSubmitted(false)}
-                  className="mt-4 px-3 py-1 border border-light/20 text-xs text-light/50 hover:text-light transition-colors"
+                  className="bevel-btn px-4 py-1.5 text-xs font-bold mt-2"
                 >
-                  SEND ANOTHER
+                  SEND ANOTHER DISPATCH
                 </button>
               </div>
             )}
           </div>
         </div>
       </div>
-    </section>
+    </OSWindow>
   );
 }
