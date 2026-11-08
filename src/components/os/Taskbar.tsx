@@ -260,6 +260,7 @@ export default function Taskbar({ onOpenBios }: TaskbarProps) {
 
       {/* Main Bottom Taskbar */}
       <footer
+        id="taskbar"
         className="fixed bottom-0 left-0 right-0 h-10 bevel-raised flex items-center justify-between px-1 z-[100] bg-surface select-none"
         style={{
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',

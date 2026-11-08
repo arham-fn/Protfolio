@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { Project } from '@/types';
+import { gsap } from '@/lib/gsap';
 
 interface CaseStudyProps {
   project: Project;
@@ -10,6 +11,33 @@ interface CaseStudyProps {
 
 export default function CaseStudy({ project, onClose }: CaseStudyProps) {
   const [iframeLoaded, setIframeLoaded] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!modalRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        modalRef.current,
+        { scale: 0.94, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.35, ease: 'back.out(1.4)' }
+      );
+    }, modalRef);
+    return () => ctx.revert();
+  }, []);
+
+  const handleAnimatedClose = () => {
+    if (!modalRef.current) {
+      onClose();
+      return;
+    }
+    gsap.to(modalRef.current, {
+      scale: 0.94,
+      opacity: 0,
+      duration: 0.2,
+      ease: 'power3.in',
+      onComplete: onClose,
+    });
+  };
 
   return (
     <div
@@ -18,7 +46,10 @@ export default function CaseStudy({ project, onClose }: CaseStudyProps) {
       aria-labelledby="case-study-title"
       className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-sm"
     >
-      <div className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto bevel-raised bg-surface font-mono text-ink shadow-window flex flex-col">
+      <div
+        ref={modalRef}
+        className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto bevel-raised bg-surface font-mono text-ink shadow-window flex flex-col"
+      >
         {/* OS Window Titlebar */}
         <div className="window-titlebar shrink-0">
           <div className="flex items-center gap-2 truncate">
@@ -29,7 +60,7 @@ export default function CaseStudy({ project, onClose }: CaseStudyProps) {
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleAnimatedClose}
             aria-label="Close Case Study"
             className="win-btn hover:bg-primary hover:text-ink"
           >
@@ -180,7 +211,7 @@ export default function CaseStudy({ project, onClose }: CaseStudyProps) {
 
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleAnimatedClose}
               className="bevel-btn px-4 py-1.5 text-xs font-bold"
             >
               [EJECT DISK / CLOSE]

@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { useOSStore, type WindowId } from '@/hooks/useOSStore';
+import { gsap } from '@/lib/gsap';
 
 interface OSWindowProps {
   id: WindowId;
@@ -52,6 +53,33 @@ export default function OSWindow({
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
+
+  // GSAP Window Open Animation: scale 0.94 -> 1 with back.out(1.4) overshoot
+  useEffect(() => {
+    if (!isOpen || isMinimized || !windowRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        windowRef.current,
+        { scale: 0.94, opacity: 0.7 },
+        { scale: 1, opacity: 1, duration: 0.35, ease: 'back.out(1.4)' }
+      );
+    }, windowRef);
+    return () => ctx.revert();
+  }, [isOpen, isMinimized]);
+
+  const handleAnimatedClose = () => {
+    if (!windowRef.current) {
+      closeWindow(id);
+      return;
+    }
+    gsap.to(windowRef.current, {
+      scale: 0.94,
+      opacity: 0,
+      duration: 0.2,
+      ease: 'power3.in',
+      onComplete: () => closeWindow(id),
+    });
+  };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     bringToFront(id);
@@ -157,7 +185,7 @@ export default function OSWindow({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              closeWindow(id);
+              handleAnimatedClose();
             }}
             aria-label={`Close ${title}`}
             className="win-btn hover:bg-[#F2541B] hover:text-[#1A1814] active:brightness-90"

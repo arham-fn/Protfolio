@@ -12,7 +12,7 @@ export default function OSHeader({ onOpenBios }: OSHeaderProps) {
   const unlockedCount = unlockedAchievements.size;
 
   return (
-    <header className="sticky top-0 z-[100] h-10 bevel-raised bg-surface px-2 sm:px-4 flex items-center justify-between font-mono text-xs text-ink select-none border-b border-lo">
+    <header id="os-header" className="sticky top-0 z-[100] h-10 bevel-raised bg-surface px-2 sm:px-4 flex items-center justify-between font-mono text-xs text-ink select-none border-b border-lo">
       {/* Left: Brand & Menu Items */}
       <div className="flex items-center gap-2 sm:gap-4 truncate">
         <div className="flex items-center gap-1.5 font-black text-accent text-sm tracking-wide">

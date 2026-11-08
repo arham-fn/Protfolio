@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
-import { ScrollTrigger } from '@/lib/gsap';
+import { gsap, ScrollTrigger } from '@/lib/gsap';
 
 export function useLenis() {
   const lenisRef = useRef<Lenis | null>(null);
@@ -23,17 +23,18 @@ export function useLenis() {
     });
     lenisRef.current = lenis;
 
-    // Connect Lenis to GSAP ScrollTrigger
+    // Connect Lenis to GSAP ScrollTrigger and GSAP ticker (one clock for everything)
     lenis.on('scroll', ScrollTrigger.update);
 
-    const raf = (time: number) => {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
+    const updateLenis = (time: number) => {
+      lenis.raf(time * 1000);
     };
-    const reqId = requestAnimationFrame(raf);
+
+    gsap.ticker.add(updateLenis);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
-      cancelAnimationFrame(reqId);
+      gsap.ticker.remove(updateLenis);
       lenis.destroy();
       lenisRef.current = null;
     };

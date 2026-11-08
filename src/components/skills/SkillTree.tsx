@@ -1,16 +1,31 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { SKILL_NODES, type ExtendedSkillNode } from '@/lib/skills';
 import SkillSprites from './SkillSprites';
 import SkillNode from './SkillNode';
 import OSWindow from '@/components/os/OSWindow';
 import { useOSStore } from '@/hooks/useOSStore';
+import { gsap } from '@/lib/gsap';
 
 export default function SkillTree() {
   const [activeHoverId, setActiveHoverId] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<ExtendedSkillNode | null>(null);
   const { trackSkillClick } = useOSStore();
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (selectedNode && drawerRef.current) {
+      const ctx = gsap.context(() => {
+        gsap.fromTo(
+          drawerRef.current,
+          { scale: 0.95, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.4)' }
+        );
+      }, drawerRef);
+      return () => ctx.revert();
+    }
+  }, [selectedNode]);
 
   const handleSelectNode = (node: ExtendedSkillNode) => {
     trackSkillClick(node.id);
@@ -151,9 +166,10 @@ export default function SkillTree() {
         {/* Selected Node Details Drawer */}
         {selectedNode && (
           <div
+            ref={drawerRef}
             role="region"
             aria-live="polite"
-            className="p-4 bevel-raised bg-surface space-y-2 border-2 border-accent animate-in fade-in duration-200"
+            className="p-4 bevel-raised bg-surface space-y-2 border-2 border-accent"
           >
             <div className="flex items-center justify-between border-b border-lo pb-2">
               <div className="flex items-center gap-2">

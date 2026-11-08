@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import type { RepairDevice } from '@/types';
+import { gsap } from '@/lib/gsap';
 
 interface RepairTicketProps {
   device: RepairDevice;
@@ -9,6 +10,34 @@ interface RepairTicketProps {
 }
 
 export default function RepairTicket({ device, onClose }: RepairTicketProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!modalRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        modalRef.current,
+        { scale: 0.94, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.35, ease: 'back.out(1.4)' }
+      );
+    }, modalRef);
+    return () => ctx.revert();
+  }, []);
+
+  const handleAnimatedClose = () => {
+    if (!modalRef.current) {
+      onClose();
+      return;
+    }
+    gsap.to(modalRef.current, {
+      scale: 0.94,
+      opacity: 0,
+      duration: 0.2,
+      ease: 'power3.in',
+      onComplete: onClose,
+    });
+  };
+
   return (
     <div
       role="dialog"
@@ -16,7 +45,10 @@ export default function RepairTicket({ device, onClose }: RepairTicketProps) {
       aria-labelledby="ticket-title"
       className="fixed inset-0 z-[160] flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-sm font-mono text-ink"
     >
-      <div className="relative w-full max-w-lg bevel-raised bg-surface shadow-window flex flex-col">
+      <div
+        ref={modalRef}
+        className="relative w-full max-w-lg bevel-raised bg-surface shadow-window flex flex-col"
+      >
         {/* Window Titlebar */}
         <div className="window-titlebar">
           <div className="flex items-center gap-1.5 truncate">
@@ -27,7 +59,7 @@ export default function RepairTicket({ device, onClose }: RepairTicketProps) {
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleAnimatedClose}
             aria-label="Close Ticket"
             className="win-btn hover:bg-primary hover:text-ink"
           >
@@ -74,7 +106,7 @@ export default function RepairTicket({ device, onClose }: RepairTicketProps) {
             <span className="font-bold text-ink">INVOICE: $0.00 (PRO BONO)</span>
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleAnimatedClose}
               className="bevel-btn px-3 py-1 font-bold text-xs"
             >
               DISMISS
